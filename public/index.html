@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liga de Básquetbol</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Panel administrativo</p>
+          <h1>Liga de Básquetbol</h1>
+        </div>
+        <button id="logoutBtn" class="secondary hidden">Cerrar sesión</button>
+      </header>
+
+      <section id="authView" class="card">
+        <div class="tabs">
+          <button class="tab active" data-tab="login">Iniciar sesión</button>
+          <button class="tab" data-tab="register">Registrarse</button>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <h2>Acceso de usuario</h2>
+          <label>
+            Usuario
+            <input name="username" type="text" placeholder="Ej. admin" required />
+          </label>
+          <label>
+            Contraseña
+            <input name="password" type="password" placeholder="••••••••" required />
+          </label>
+          <button type="submit">Entrar</button>
+        </form>
+
+        <form id="registerForm" class="auth-form hidden">
+          <h2>Crear cuenta</h2>
+          <label>
+            Usuario
+            <input name="username" type="text" placeholder="Ej. coach1" required />
+          </label>
+          <label>
+            Contraseña
+            <input name="password" type="password" placeholder="Mínimo 4 caracteres" required />
+          </label>
+          <button type="submit">Registrarme</button>
+        </form>
+      </section>
+
+      <main id="appView" class="hidden">
+        <section class="panel">
+          <div class="section-header">
+            <h2>Equipos</h2>
+            <button id="resetTeamForm" class="secondary">Nuevo equipo</button>
+          </div>
+
+          <form id="teamForm" class="grid-form">
+            <input type="hidden" name="teamId" />
+            <label>
+              Nombre
+              <input name="name" type="text" placeholder="Ej. Lakers" required />
+            </label>
+            <label>
+              Ciudad
+              <input name="city" type="text" placeholder="Ej. Los Ángeles" required />
+            </label>
+            <button type="submit">Guardar equipo</button>
+          </form>
+
+          <div id="teamsList" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-header">
+            <h2>Jugadores</h2>
+          </div>
+
+          <form id="playerForm" class="grid-form">
+            <input type="hidden" name="playerId" />
+            <label>
+              Equipo
+              <select name="teamId" id="playerTeamSelect" required></select>
+            </label>
+            <label>
+              Nombre
+              <input name="name" type="text" placeholder="Ej. James García" required />
+            </label>
+            <label>
+              Posición
+              <input name="position" type="text" placeholder="Ej. Alero" required />
+            </label>
+            <label>
+              Número
+              <input name="number" type="number" min="0" placeholder="0" required />
+            </label>
+            <button type="submit">Guardar jugador</button>
+          </form>
+
+          <div id="playersList" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-header">
+            <h2>Partidos</h2>
+          </div>
+
+          <form id="matchForm" class="grid-form match-form">
+            <label>
+              Equipo local
+              <select id="localTeamSelect" name="localTeamId" required></select>
+            </label>
+            <label>
+              Equipo visitante
+              <select id="visitorTeamSelect" name="visitorTeamId" required></select>
+            </label>
+            <label>
+              Marcador local
+              <input name="localScore" type="number" min="0" value="0" required />
+            </label>
+            <label>
+              Marcador visitante
+              <input name="visitorScore" type="number" min="0" value="0" required />
+            </label>
+            <label>
+              Fecha
+              <input name="playedOn" type="date" required />
+            </label>
+            <button type="submit">Guardar partido</button>
+          </form>
+
+          <div id="matchesList" class="list"></div>
+        </section>
+
+        <section class="panel">
+          <h2>Estadísticas</h2>
+          <div id="statsContent" class="stats"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
