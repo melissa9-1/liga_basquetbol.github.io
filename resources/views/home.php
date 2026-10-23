@@ -5,33 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Resultados, equipos y clasificación de la liga de básquetbol.">
     <title>Liga de Básquetbol</title>
-    <link rel="stylesheet" href="<?= h(url('/assets/css/style.css')) ?>">
+    <link rel="stylesheet" href="<?= h(asset_url('/assets/style.css')) ?>">
 </head>
-<body class="<?= $loggedUser ? '' : 'landing-body' ?>">
-    <main class="container">
+<body class="<?= $loggedUser ? 'app-body' : 'landing-body' ?>">
+    <main class="container <?= $loggedUser ? 'admin-shell' : 'public-shell' ?>">
         <?php require __DIR__ . '/partials/messages.php'; ?>
 
         <?php if ($loggedUser): ?>
             <?php
             $title = 'Liga de Básquetbol';
             $eyebrow = 'Panel administrativo · ' . $loggedUser['username'];
-            require __DIR__ . '/partials/admin-header.php';
+            require dirname(__DIR__, 2) . '/includes/header.php';
             ?>
             <section class="dashboard">
                 <div class="panel stats-grid">
-                    <a class="tile" href="<?= h(url('/equipos')) ?>">
+                    <a class="tile" href="<?= h(url('/equipos/index.php')) ?>">
                         <span class="tile-label">Equipos</span>
                         <strong><?= count($teams) ?></strong>
                     </a>
-                    <a class="tile" href="<?= h(url('/jugadores')) ?>">
+                    <a class="tile" href="<?= h(url('/jugadores/index.php')) ?>">
                         <span class="tile-label">Jugadores</span>
                         <strong><?= (int) $playerCount ?></strong>
                     </a>
-                    <a class="tile" href="<?= h(url('/partidos')) ?>">
+                    <a class="tile" href="<?= h(url('/partidos/index.php')) ?>">
                         <span class="tile-label">Partidos</span>
                         <strong><?= (int) $matchCount ?></strong>
                     </a>
-                    <a class="tile" href="<?= h(url('/estadisticas')) ?>">
+                    <a class="tile" href="<?= h(url('/estadisticas/posiciones.php')) ?>">
                         <span class="tile-label">Clasificación</span>
                         <strong>Ver</strong>
                     </a>
@@ -39,10 +39,10 @@
                 <section class="panel">
                     <h2>Acciones rápidas</h2>
                     <div class="quick-actions">
-                        <a class="button primary" href="<?= h(url('/equipos')) ?>">Gestionar equipos</a>
-                        <a class="button primary" href="<?= h(url('/jugadores')) ?>">Gestionar jugadores</a>
-                        <a class="button primary" href="<?= h(url('/partidos')) ?>">Registrar partidos</a>
-                        <a class="button secondary" href="<?= h(url('/estadisticas')) ?>">Ver estadísticas</a>
+                        <a class="button primary" href="<?= h(url('/equipos/index.php')) ?>">Gestionar equipos</a>
+                        <a class="button primary" href="<?= h(url('/jugadores/index.php')) ?>">Gestionar jugadores</a>
+                        <a class="button primary" href="<?= h(url('/partidos/index.php')) ?>">Registrar partidos</a>
+                        <a class="button secondary" href="<?= h(url('/estadisticas/posiciones.php')) ?>">Ver estadísticas</a>
                     </div>
                 </section>
             </section>
@@ -65,6 +65,7 @@
                         <circle cx="12" cy="8" r="3.5"></circle>
                         <path d="M5 20c.8-3.3 3.3-5 7-5s6.2 1.7 7 5"></path>
                     </svg>
+                    <span>Acceso</span>
                 </button>
             </header>
 
@@ -77,13 +78,13 @@
                     <button class="tab active" type="button" data-target="login-form">Iniciar sesión</button>
                     <button class="tab" type="button" data-target="register-form">Registrarse</button>
                 </div>
-                <form id="login-form" class="auth-form" method="post" action="<?= h(url('/login')) ?>">
+                <form id="login-form" class="auth-form" method="post" action="<?= h(url('/auth/login.php')) ?>">
                     <?= csrf_field() ?>
                     <label>Usuario<input type="text" name="username" maxlength="100" required autocomplete="username"></label>
                     <label>Contraseña<input type="password" name="password" required autocomplete="current-password"></label>
                     <button type="submit" class="button primary">Entrar</button>
                 </form>
-                <form id="register-form" class="auth-form hidden" method="post" action="<?= h(url('/register')) ?>">
+                <form id="register-form" class="auth-form hidden" method="post" action="<?= h(url('/auth/registro.php')) ?>">
                     <?= csrf_field() ?>
                     <label>Usuario<input type="text" name="username" maxlength="100" required autocomplete="username"></label>
                     <label>Contraseña<input type="password" name="password" minlength="4" required autocomplete="new-password"></label>
@@ -94,20 +95,30 @@
             <div class="landing-page">
                 <section class="hero-section" id="inicio">
                     <div class="hero-copy">
-                        <p class="hero-kicker">La emoción se vive en la cancha</p>
-                        <h1>Liga de<br><span>básquetbol</span></h1>
-                        <p class="hero-description">Sigue a tus equipos, consulta los últimos marcadores y descubre cómo se mueve la tabla de posiciones.</p>
+                        <div class="hero-copy-content">
+                            <a class="hero-wordmark" href="#inicio" aria-label="Liga Basket, inicio">
+                                <span class="brand-mark__ball" aria-hidden="true">●</span>
+                                <span class="brand-mark__name">Liga<span>Basket</span></span>
+                            </a>
+                            <p class="hero-kicker">La emoción se vive en la cancha</p>
+                            <h1>Liga de <span>básquetbol</span></h1>
+                            <p class="hero-description">Sigue a tus equipos, consulta los últimos marcadores y descubre cómo se mueve la tabla de posiciones.</p>
+                        </div>
                         <div class="hero-actions">
                             <a href="#equipos" class="button action ghost">Conocer equipos</a>
                             <a href="#resultados" class="button action primary">Ver resultados</a>
                         </div>
                     </div>
-                    <div class="hero-visual" aria-label="Diseño de cancha de básquetbol">
-                        <div class="court-markings" aria-hidden="true">
+                    <div class="hero-visual" role="img" aria-label="Ilustración de cancha y balón de básquetbol">
+                        <div class="arena-scene" aria-hidden="true">
+                            <span class="arena-light arena-light--one"></span>
+                            <span class="arena-light arena-light--two"></span>
+                            <span class="arena-stand"></span>
+                            <span class="arena-hoop"><i></i><b></b></span>
+                            <span class="arena-floor"></span>
                             <span class="court-ball"></span>
-                            <span class="court-label">Juega en equipo</span>
                         </div>
-                        <a href="#clasificacion" class="booking-badge">Explorar la liga <span aria-hidden="true">→</span></a>
+                        <span class="hero-image-caption">Liga de Básquetbol <i>·</i> Temporada actual</span>
                     </div>
                 </section>
 
@@ -170,6 +181,5 @@
             </div>
         <?php endif; ?>
     </main>
-    <script src="<?= h(url('/assets/js/script.js')) ?>"></script>
-</body>
-</html>
+    <script src="<?= h(asset_url('/assets/js/script.js')) ?>"></script>
+    <?php require dirname(__DIR__, 2) . '/includes/footer.php'; ?>

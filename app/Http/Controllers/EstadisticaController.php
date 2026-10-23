@@ -23,7 +23,7 @@ final class EstadisticaController extends Controller
     {
         $teams = (new Equipo($this->pdo))->all();
         $rows = $this->pdo->query(
-            'SELECT local_team_id, visitor_team_id, local_score, visitor_score FROM matches'
+            'SELECT local_team_id, visitor_team_id, local_score, visitor_score FROM matches WHERE played = 1'
         )->fetchAll();
 
         $standings = [];

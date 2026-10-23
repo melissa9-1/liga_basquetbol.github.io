@@ -11,13 +11,26 @@ final class MigrationRunner
 {
     public static function run(PDO $pdo, string $directory): void
     {
-        $pdo->exec(
-            'CREATE TABLE IF NOT EXISTS migrations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                migration VARCHAR(255) NOT NULL UNIQUE,
-                ran_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB'
-        );
+        $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
+        if ($driver === 'mysql') {
+            $pdo->exec(
+                'CREATE TABLE IF NOT EXISTS migrations (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    migration VARCHAR(255) NOT NULL UNIQUE,
+                    ran_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                ) ENGINE=InnoDB'
+            );
+        } elseif ($driver === 'sqlite') {
+            $pdo->exec(
+                'CREATE TABLE IF NOT EXISTS migrations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    migration TEXT NOT NULL UNIQUE,
+                    ran_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )'
+            );
+        } else {
+            throw new RuntimeException("El controlador PDO {$driver} no está soportado.");
+        }
 
         $files = glob($directory . DIRECTORY_SEPARATOR . '*.php');
         if ($files === false) {

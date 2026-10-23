@@ -17,10 +17,20 @@ final class JugadorController extends Controller
         $model = new Jugador($this->pdo);
         $editId = filter_var($_GET['edit'] ?? null, FILTER_VALIDATE_INT);
         $editingPlayer = $editId !== false && $editId > 0 ? $model->find($editId) : null;
+        $teamFilter = null;
+        if (isset($_GET['team_id']) && $_GET['team_id'] !== '') {
+            $teamFilter = filter_var($_GET['team_id'], FILTER_VALIDATE_INT);
+            if ($teamFilter === false || $teamFilter < 1) {
+                $teamFilter = null;
+                flash('error', 'El equipo seleccionado para filtrar no es válido.');
+            }
+        }
+
         $this->render('jugadores/index', [
             'teams' => (new Equipo($this->pdo))->all(),
-            'players' => $model->all(),
+            'players' => $model->all($teamFilter),
             'editingPlayer' => $editingPlayer,
+            'teamFilter' => $teamFilter,
         ]);
     }
 
@@ -30,7 +40,7 @@ final class JugadorController extends Controller
         try {
             $data = (new StoreJugadorRequest($_POST, $this->pdo))->validated();
         } catch (ValidationException $exception) {
-            handle_validation($exception, '/jugadores');
+            handle_validation($exception, '/jugadores/index.php');
         }
 
         (new Jugador($this->pdo))->save(
@@ -41,7 +51,7 @@ final class JugadorController extends Controller
             $data['number']
         );
         flash('success', $data['id'] === null ? 'Jugador agregado.' : 'Jugador actualizado.');
-        redirect('/jugadores');
+        redirect('/jugadores/index.php');
     }
 
     public function delete(): void
@@ -50,11 +60,11 @@ final class JugadorController extends Controller
         $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
         if ($id === false || $id < 1) {
             flash('error', 'El jugador seleccionado no es válido.');
-            redirect('/jugadores');
+            redirect('/jugadores/index.php');
         }
 
         (new Jugador($this->pdo))->delete($id);
         flash('success', 'Jugador eliminado.');
-        redirect('/jugadores');
+        redirect('/jugadores/index.php');
     }
 }

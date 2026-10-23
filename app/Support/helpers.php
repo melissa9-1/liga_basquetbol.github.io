@@ -21,6 +21,14 @@ function url(string $path = '/'): string
     return app_base_path() . '/' . ltrim($path, '/');
 }
 
+function asset_url(string $path): string
+{
+    $file = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, ltrim($path, '/'));
+    $version = is_file($file) ? (string) filemtime($file) : '';
+
+    return url($path) . ($version !== '' ? '?v=' . rawurlencode($version) : '');
+}
+
 function redirect(string $path): never
 {
     header('Location: ' . url($path));

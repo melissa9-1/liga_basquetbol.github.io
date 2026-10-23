@@ -22,8 +22,6 @@ final class StorePartidoRequest extends Request
             throw new ValidationException('Los dos equipos seleccionados deben existir.');
         }
 
-        $localScore = $this->integer('local_score', 'El marcador local');
-        $visitorScore = $this->integer('visitor_score', 'El marcador visitante');
         $playedOn = $this->input['played_on'] ?? null;
         if (!is_string($playedOn)) {
             throw new ValidationException('La fecha del partido no es válida.');
@@ -39,6 +37,6 @@ final class StorePartidoRequest extends Request
             throw new ValidationException('La fecha del partido no es válida.');
         }
 
-        return compact('localTeamId', 'visitorTeamId', 'localScore', 'visitorScore', 'playedOn');
+        return compact('localTeamId', 'visitorTeamId', 'playedOn');
     }
 }

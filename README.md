@@ -1,26 +1,30 @@
 # Liga de Básquetbol
 
-Aplicación web en PHP con una arquitectura MVC ligera, sin dependencias de framework. Requiere PHP 8.1 o superior y MySQL/MariaDB.
+Aplicación web PHP para administrar equipos, jugadores, partidos y estadísticas. Funciona en XAMPP con PHP 8.1 o posterior, MySQL/MariaDB y PDO MySQL.
 
 ## Ejecutar en XAMPP
 
-1. Copia el proyecto en `htdocs` y activa Apache y MySQL.
-2. Opcionalmente configura `DB_HOST`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`. Los valores predeterminados son `localhost`, `liga_basquetbol`, `root` y contraseña vacía.
-3. Abre `http://localhost/liga/`. La aplicación crea la base de datos y aplica las migraciones al iniciar.
-4. Registra una cuenta desde el acceso administrativo de la página principal.
+1. Coloca el proyecto en `C:\xampp\htdocs\liga`.
+2. Inicia **Apache** y **MySQL** desde el panel de XAMPP.
+3. Confirma que `pdo_mysql` esté habilitado en el `php.ini` que usa XAMPP.
+4. Abre `http://localhost/liga/`. La aplicación crea la base `liga_basquetbol` y aplica sus migraciones al iniciar.
+5. Registra un usuario desde el acceso administrativo de la página principal.
 
-También puedes aplicar las migraciones desde la terminal con `php database/migrate.php`. Las rutas de administración requieren iniciar sesión y las operaciones POST validan un token CSRF.
-Para insertar equipos de demostración en una liga vacía, ejecuta `php database/seed.php`.
+La conexión está en `config/conexion.php`. De forma predeterminada usa `localhost`, la base `liga_basquetbol`, el usuario `root` y contraseña vacía. Se pueden cambiar con `DB_HOST`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`.
+
+El esquema también está disponible en [`database/liga.sql`](database/liga.sql) para importarlo desde phpMyAdmin. Las migraciones se ejecutan automáticamente; también se pueden ejecutar desde la terminal con `php database/migrate.php`.
+
+El archivo [`data/liga.db`](data/liga.db) se conserva únicamente como copia SQLite antigua. No es la base activa ni se importan sus datos a MySQL.
 
 ## Estructura
 
-- `app/Models/`: acceso a usuarios, equipos, jugadores y partidos.
-- `app/Http/Controllers/`: controladores de páginas y operaciones.
-- `app/Http/Requests/`: validación de formularios.
-- `database/migrations/`: creación del esquema e importación de tablas antiguas en español.
-- `database/seeders/` y `database/factories/`: datos de ejemplo opcionales.
-- `resources/views/`: páginas PHP y parciales.
-- `routes/web.php`: definición de rutas.
-- `index.php`: punto de entrada HTTP.
+- `config/conexion.php`: conexión PDO a MySQL.
+- `database/liga.sql` y `database/migrations/`: esquema inicial y cambios incrementales.
+- `includes/`: inicio de sesión de aplicación, despacho, cabecera, pie y tabla reutilizable.
+- `auth/`, `equipos/`, `jugadores/`, `partidos/` y `estadisticas/`: puntos de entrada PHP organizados por módulo.
+- `app/`: controladores, validaciones, modelos y servicios internos compartidos por esos módulos.
+- `resources/views/`: plantillas HTML.
+- `assets/`: estilos y JavaScript de la interfaz.
+- `index.php`: página principal y dashboard.
 
-Las tablas `users`, `teams`, `players` y `matches` conservan el esquema anterior. No se necesita una migración destructiva; si existen las tablas antiguas `usuarios`, `equipos`, `jugadores` y `partidos`, se importan a las tablas actuales sin duplicar registros coincidentes.
+Las rutas de administración requieren iniciar sesión y las operaciones POST validan un token CSRF. Los jugadores se pueden filtrar por equipo; los partidos se programan y sus marcadores se registran por separado.

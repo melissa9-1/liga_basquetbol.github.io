@@ -6,13 +6,16 @@ namespace Liga\Models;
 
 final class Jugador extends Model
 {
-    public function all(): array
+    public function all(?int $teamId = null): array
     {
+        $filter = $teamId === null ? '' : 'WHERE p.team_id = :team_id';
         return $this->fetchAll(
-            'SELECT p.*, t.name AS team_name
+            "SELECT p.*, t.name AS team_name
              FROM players p
              JOIN teams t ON t.id = p.team_id
-             ORDER BY t.name ASC, p.number ASC, p.name ASC'
+             {$filter}
+             ORDER BY t.name ASC, p.number ASC, p.name ASC",
+            $teamId === null ? [] : ['team_id' => $teamId]
         );
     }
 

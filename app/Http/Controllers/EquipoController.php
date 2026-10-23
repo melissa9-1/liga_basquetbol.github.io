@@ -25,12 +25,12 @@ final class EquipoController extends Controller
         try {
             $data = (new StoreEquipoRequest($_POST, $this->pdo))->validated();
         } catch (ValidationException $exception) {
-            handle_validation($exception, '/equipos');
+            handle_validation($exception, '/equipos/index.php');
         }
 
         (new Equipo($this->pdo))->save($data['id'], $data['name'], $data['city']);
         flash('success', $data['id'] === null ? 'Equipo creado correctamente.' : 'Equipo actualizado correctamente.');
-        redirect('/equipos');
+        redirect('/equipos/index.php');
     }
 
     public function delete(): void
@@ -39,11 +39,11 @@ final class EquipoController extends Controller
         $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
         if ($id === false || $id < 1) {
             flash('error', 'El equipo seleccionado no es válido.');
-            redirect('/equipos');
+            redirect('/equipos/index.php');
         }
 
         (new Equipo($this->pdo))->delete($id);
         flash('success', 'Equipo eliminado.');
-        redirect('/equipos');
+        redirect('/equipos/index.php');
     }
 }
