@@ -37,6 +37,34 @@ final class StorePartidoRequest extends Request
             throw new ValidationException('La fecha del partido no es válida.');
         }
 
-        return compact('localTeamId', 'visitorTeamId', 'playedOn');
+        $playedAt = $this->input['played_at'] ?? null;
+        if (!is_string($playedAt) || preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $playedAt) !== 1) {
+            throw new ValidationException('La hora del partido no es válida.');
+        }
+
+        $venue = $this->requiredText('venue', 'El lugar del partido', 200);
+        $status = $this->input['status'] ?? null;
+        if (!is_string($status) || !in_array($status, ['scheduled', 'played'], true)) {
+            throw new ValidationException('Selecciona un estado válido para el partido.');
+        }
+
+        $played = $status === 'played' ? 1 : 0;
+        $localScore = 0;
+        $visitorScore = 0;
+        if ($played === 1) {
+            $localScore = $this->integer('local_score', 'El marcador local');
+            $visitorScore = $this->integer('visitor_score', 'El marcador visitante');
+        }
+
+        return compact(
+            'localTeamId',
+            'visitorTeamId',
+            'playedOn',
+            'playedAt',
+            'venue',
+            'played',
+            'localScore',
+            'visitorScore'
+        );
     }
 }

@@ -38,30 +38,53 @@ final class Partido extends Model
         return (int) $this->pdo->query('SELECT COUNT(*) FROM matches')->fetchColumn();
     }
 
-    public function save(int $localTeamId, int $visitorTeamId, int $localScore, int $visitorScore, string $playedOn): void
+    public function save(
+        int $localTeamId,
+        int $visitorTeamId,
+        int $localScore,
+        int $visitorScore,
+        string $playedOn,
+        ?string $playedAt = null,
+        ?string $venue = null
+    ): void
     {
         $this->run(
-            'INSERT INTO matches (local_team_id, visitor_team_id, local_score, visitor_score, played_on, played)
-             VALUES (:local_team_id, :visitor_team_id, :local_score, :visitor_score, :played_on, 1)',
+            'INSERT INTO matches (local_team_id, visitor_team_id, local_score, visitor_score, played_on, played_at, venue, played)
+             VALUES (:local_team_id, :visitor_team_id, :local_score, :visitor_score, :played_on, :played_at, :venue, 1)',
             [
                 'local_team_id' => $localTeamId,
                 'visitor_team_id' => $visitorTeamId,
                 'local_score' => $localScore,
                 'visitor_score' => $visitorScore,
                 'played_on' => $playedOn,
+                'played_at' => $playedAt,
+                'venue' => $venue,
             ]
         );
     }
 
-    public function schedule(int $localTeamId, int $visitorTeamId, string $playedOn): void
-    {
+    public function schedule(
+        int $localTeamId,
+        int $visitorTeamId,
+        string $playedOn,
+        ?string $playedAt = null,
+        ?string $venue = null,
+        bool $played = false,
+        int $localScore = 0,
+        int $visitorScore = 0
+    ): void {
         $this->run(
-            'INSERT INTO matches (local_team_id, visitor_team_id, local_score, visitor_score, played_on, played)
-             VALUES (:local_team_id, :visitor_team_id, 0, 0, :played_on, 0)',
+            'INSERT INTO matches (local_team_id, visitor_team_id, local_score, visitor_score, played_on, played_at, venue, played)
+             VALUES (:local_team_id, :visitor_team_id, :local_score, :visitor_score, :played_on, :played_at, :venue, :played)',
             [
                 'local_team_id' => $localTeamId,
                 'visitor_team_id' => $visitorTeamId,
+                'local_score' => $played ? $localScore : 0,
+                'visitor_score' => $played ? $visitorScore : 0,
                 'played_on' => $playedOn,
+                'played_at' => $playedAt,
+                'venue' => $venue,
+                'played' => $played ? 1 : 0,
             ]
         );
     }

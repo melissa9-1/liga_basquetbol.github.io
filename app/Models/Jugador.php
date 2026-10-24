@@ -29,13 +29,21 @@ final class Jugador extends Model
         return (int) $this->pdo->query('SELECT COUNT(*) FROM players')->fetchColumn();
     }
 
-    public function save(?int $id, int $teamId, string $name, string $position, int $number): void
+    public function save(
+        ?int $id,
+        int $teamId,
+        string $name,
+        string $position,
+        int $number,
+        ?float $height = null,
+        ?string $birthDate = null
+    ): void
     {
-        $values = compact('teamId', 'name', 'position', 'number');
+        $values = compact('teamId', 'name', 'position', 'number', 'height', 'birthDate');
         if ($id === null) {
             $this->run(
-                'INSERT INTO players (team_id, name, position, number)
-                 VALUES (:teamId, :name, :position, :number)',
+                'INSERT INTO players (team_id, name, position, number, height, birth_date)
+                 VALUES (:teamId, :name, :position, :number, :height, :birthDate)',
                 $values
             );
             return;
@@ -43,7 +51,10 @@ final class Jugador extends Model
 
         $values['id'] = $id;
         $this->run(
-            'UPDATE players SET team_id = :teamId, name = :name, position = :position, number = :number WHERE id = :id',
+            'UPDATE players
+             SET team_id = :teamId, name = :name, position = :position, number = :number,
+                 height = :height, birth_date = :birthDate
+             WHERE id = :id',
             $values
         );
     }

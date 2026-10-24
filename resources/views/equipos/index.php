@@ -46,6 +46,7 @@
                             <?php if (!empty($team['founded_year'])): ?><small>Fundado en <?= (int) $team['founded_year'] ?></small><?php endif; ?>
                         </div>
                         <div class="actions">
+                            <a class="button secondary" href="<?= h(url('/jugadores/index.php?team_id=' . (int) $team['id'])) ?>">Ver jugadores</a>
                             <a class="button secondary" href="<?= h(url('/equipos/form.php?id=' . (int) $team['id'])) ?>">Editar</a>
                             <form method="post" action="<?= h(url('/equipos/eliminar.php')) ?>" class="inline-form" onsubmit="return confirm('¿Eliminar este equipo y sus registros asociados?')">
                                 <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $team['id'] ?>">

@@ -26,7 +26,7 @@
                         <input type="hidden" name="match_id" value="<?= (int) $match['id'] ?>">
                         <div>
                             <strong><?= h($match['local_name']) ?> vs <?= h($match['visitor_name']) ?></strong>
-                            <small><?= h($match['played_on']) ?> · <?= (int) $match['played'] === 1 ? 'Marcador registrado' : 'Pendiente' ?></small>
+                            <small><?= h($match['played_on']) ?><?= !empty($match['played_at']) ? ' · ' . h(substr($match['played_at'], 0, 5)) : '' ?><?= !empty($match['venue']) ? ' · ' . h($match['venue']) : '' ?> · <?= (int) $match['played'] === 1 ? 'Marcador registrado' : 'Pendiente' ?></small>
                         </div>
                         <label>Marcador local
                             <input type="number" name="local_score" min="0" value="<?= (int) $match['local_score'] ?>" required>

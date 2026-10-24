@@ -25,6 +25,8 @@ return static function (PDO $pdo): void {
                 name TEXT NOT NULL,
                 position TEXT NOT NULL,
                 number INTEGER NOT NULL CHECK(number > 0),
+                height REAL NULL,
+                birth_date TEXT NULL,
                 FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
             );
 
@@ -35,6 +37,8 @@ return static function (PDO $pdo): void {
                 local_score INTEGER NOT NULL DEFAULT 0,
                 visitor_score INTEGER NOT NULL DEFAULT 0,
                 played_on TEXT NOT NULL,
+                played_at TEXT,
+                venue TEXT,
                 played INTEGER NOT NULL DEFAULT 1,
                 CHECK(local_team_id <> visitor_team_id),
                 CHECK(local_score >= 0),
@@ -69,6 +73,8 @@ return static function (PDO $pdo): void {
             name VARCHAR(150) NOT NULL,
             position VARCHAR(80) NOT NULL,
             number INT NOT NULL,
+            height DECIMAL(5,2) NULL,
+            birth_date DATE NULL,
             CONSTRAINT fk_players_team FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
         ) ENGINE=InnoDB;
 
@@ -79,6 +85,8 @@ return static function (PDO $pdo): void {
             local_score INT NOT NULL DEFAULT 0,
             visitor_score INT NOT NULL DEFAULT 0,
             played_on DATE NOT NULL,
+            played_at TIME NULL,
+            venue VARCHAR(200) NULL,
             played TINYINT(1) NOT NULL DEFAULT 1,
             CONSTRAINT fk_matches_local FOREIGN KEY (local_team_id) REFERENCES teams(id) ON DELETE CASCADE,
             CONSTRAINT fk_matches_visitor FOREIGN KEY (visitor_team_id) REFERENCES teams(id) ON DELETE CASCADE

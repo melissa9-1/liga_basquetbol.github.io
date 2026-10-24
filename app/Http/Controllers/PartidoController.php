@@ -39,9 +39,14 @@ final class PartidoController extends Controller
         (new Partido($this->pdo))->schedule(
             $data['localTeamId'],
             $data['visitorTeamId'],
-            $data['playedOn']
+            $data['playedOn'],
+            $data['playedAt'],
+            $data['venue'],
+            $data['played'],
+            $data['localScore'],
+            $data['visitorScore']
         );
-        flash('success', 'Partido programado correctamente.');
+        flash('success', $data['played'] === 1 ? 'Partido registrado correctamente.' : 'Partido programado correctamente.');
         redirect('/partidos/index.php');
     }
 

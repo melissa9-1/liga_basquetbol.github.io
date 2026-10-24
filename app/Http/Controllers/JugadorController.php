@@ -48,7 +48,9 @@ final class JugadorController extends Controller
             $data['teamId'],
             $data['name'],
             $data['position'],
-            $data['number']
+            $data['number'],
+            $data['height'],
+            $data['birthDate']
         );
         flash('success', $data['id'] === null ? 'Jugador agregado.' : 'Jugador actualizado.');
         redirect('/jugadores/index.php');

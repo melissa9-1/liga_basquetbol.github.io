@@ -166,7 +166,8 @@
                                 <?php foreach ($matches as $match): ?>
                                     <article class="match-card">
                                         <div class="match-card__teams"><span><?= h($match['local_name']) ?></span><strong><?= (int) $match['local_score'] ?><i>:</i><?= (int) $match['visitor_score'] ?></strong><span><?= h($match['visitor_name']) ?></span></div>
-                                        <time datetime="<?= h($match['played_on']) ?>"><?= h($match['played_on']) ?></time>
+                                        <time datetime="<?= h($match['played_on'] . (!empty($match['played_at']) ? 'T' . $match['played_at'] : '')) ?>"><?= h($match['played_on']) ?><?= !empty($match['played_at']) ? ' · ' . h(substr($match['played_at'], 0, 5)) : '' ?></time>
+                                        <?php if (!empty($match['venue'])): ?><small><?= h($match['venue']) ?></small><?php endif; ?>
                                     </article>
                                 <?php endforeach; ?>
                             </div>

@@ -30,6 +30,8 @@
             <label>Nombre<input type="text" name="name" maxlength="150" value="<?= h($editingPlayer['name'] ?? '') ?>" required></label>
             <label>Posición<input type="text" name="position" maxlength="80" value="<?= h($editingPlayer['position'] ?? '') ?>" required></label>
             <label>Número<input type="number" name="number" min="0" value="<?= h($editingPlayer['number'] ?? 0) ?>" required></label>
+            <label>Estatura (cm)<input type="number" name="height" min="50" max="300" step="0.01" value="<?= h($editingPlayer['height'] ?? '') ?>"></label>
+            <label>Fecha de nacimiento<input type="date" name="birth_date" max="<?= h(date('Y-m-d')) ?>" value="<?= h($editingPlayer['birth_date'] ?? '') ?>"></label>
             <button type="submit" class="button primary"><?= $editingPlayer ? 'Actualizar jugador' : 'Guardar jugador' ?></button>
             <?php if ($editingPlayer): ?><a class="button secondary" href="<?= h(url('/jugadores/index.php')) ?>">Cancelar</a><?php endif; ?>
         </form>
@@ -53,7 +55,12 @@
             <div class="list">
                 <?php foreach ($players as $player): ?>
                     <article class="list-item">
-                        <div><strong><?= h($player['name']) ?></strong><small><?= h($player['team_name']) ?> · <?= h($player['position']) ?> · #<?= (int) $player['number'] ?></small></div>
+                        <div>
+                            <strong><?= h($player['name']) ?></strong>
+                            <small><?= h($player['team_name']) ?> · <?= h($player['position']) ?> · #<?= (int) $player['number'] ?></small>
+                            <?php if ($player['height'] !== null): ?><small>Estatura: <?= h($player['height']) ?> cm</small><?php endif; ?>
+                            <?php if (!empty($player['birth_date'])): ?><small>Nacimiento: <?= h($player['birth_date']) ?></small><?php endif; ?>
+                        </div>
                         <div class="actions">
                             <a class="button secondary" href="<?= h(url('/jugadores/form.php?id=' . (int) $player['id'])) ?>">Editar</a>
                             <form method="post" action="<?= h(url('/jugadores/eliminar.php')) ?>" class="inline-form" onsubmit="return confirm('¿Eliminar este jugador?')">

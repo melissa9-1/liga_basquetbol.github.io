@@ -112,7 +112,55 @@ try {
 $players = new Liga\Models\Jugador($pdo);
 $players->save(null, 1, 'Ana', 'Base', 4);
 $players->save(null, 2, 'Luis', 'Alero', 8);
-if (count($players->all(1)) !== 1 || $players->all(1)[0]['name'] !== 'Ana') {
+$playerRequest = new Liga\Http\Requests\StoreJugadorRequest([
+    'team_id' => '1',
+    'name' => 'Sofía',
+    'position' => 'Pívot',
+    'number' => '12',
+    'height' => '182.5',
+    'birth_date' => '2002-04-15',
+], $pdo);
+$playerData = $playerRequest->validated();
+$players->save(
+    $playerData['id'],
+    $playerData['teamId'],
+    $playerData['name'],
+    $playerData['position'],
+    $playerData['number'],
+    $playerData['height'],
+    $playerData['birthDate']
+);
+$invalidPlayerInputs = [
+    ['height' => '301', 'birth_date' => '2002-04-15'],
+    ['height' => '182.5', 'birth_date' => date('Y-m-d', strtotime('+1 day'))],
+];
+foreach ($invalidPlayerInputs as $details) {
+    try {
+        (new Liga\Http\Requests\StoreJugadorRequest([
+            'team_id' => '1',
+            'name' => 'Jugador inválido',
+            'position' => 'Base',
+            'number' => '10',
+            ...$details,
+        ], $pdo))->validated();
+        throw new RuntimeException('Se aceptaron detalles inválidos para un jugador.');
+    } catch (Liga\Support\ValidationException) {
+    }
+}
+$savedPlayer = $players->find(3);
+if (
+    $savedPlayer === null
+    || (float) $savedPlayer['height'] !== 182.5
+    || $savedPlayer['birth_date'] !== '2002-04-15'
+) {
+    throw new RuntimeException('Los detalles del jugador no se guardaron correctamente.');
+}
+$players->save(3, 1, 'Sofía', 'Alero', 12, null, null);
+$savedPlayer = $players->find(3);
+if ($savedPlayer === null || $savedPlayer['height'] !== null || $savedPlayer['birth_date'] !== null) {
+    throw new RuntimeException('Los detalles del jugador no se actualizaron o limpiaron correctamente.');
+}
+if (count($players->all(1)) !== 2 || $players->all(1)[0]['name'] !== 'Ana') {
     throw new RuntimeException('El filtro de jugadores por equipo no devolvió los registros esperados.');
 }
 
@@ -123,7 +171,16 @@ if ($standings[0]['name'] !== 'Halcones' || $standings[0]['wins'] !== 1 || $stan
     throw new RuntimeException('El cálculo de clasificación no coincide con el resultado registrado.');
 }
 
-(new Liga\Models\Partido($pdo))->schedule(1, 2, '2026-10-21');
+$matches = new Liga\Models\Partido($pdo);
+$matches->schedule(1, 2, '2026-10-21', '19:30', 'Gimnasio central');
+$scheduledMatch = $matches->all()[0];
+if (
+    $scheduledMatch['played_at'] !== '19:30'
+    || $scheduledMatch['venue'] !== 'Gimnasio central'
+    || (int) $scheduledMatch['played'] !== 0
+) {
+    throw new RuntimeException('Los detalles y estado programado del partido no se guardaron correctamente.');
+}
 $standings = (new Liga\Http\Controllers\EstadisticaController($pdo))->standings();
 if ($standings[0]['games'] !== 1) {
     throw new RuntimeException('Un partido pendiente no debe aparecer en la clasificación.');
@@ -138,19 +195,64 @@ if ($standings[0]['games'] !== 2) {
 $request = new Liga\Http\Requests\StorePartidoRequest([
     'local_team_id' => '1',
     'visitor_team_id' => '2',
-    'local_score' => '0',
-    'visitor_score' => '0',
     'played_on' => '2026-10-21',
+    'played_at' => '20:15',
+    'venue' => 'Arena',
+    'status' => 'scheduled',
 ], $pdo);
-if ($request->validated()['playedOn'] !== '2026-10-21') {
+if ($request->validated()['playedOn'] !== '2026-10-21' || $request->validated()['played'] !== 0) {
     throw new RuntimeException('La validación de partido no devolvió los datos esperados.');
 }
 
+try {
+    (new Liga\Http\Requests\StorePartidoRequest([
+        'local_team_id' => '1',
+        'visitor_team_id' => '1',
+        'played_on' => '2026-10-21',
+        'played_at' => '20:15',
+        'venue' => 'Arena',
+        'status' => 'scheduled',
+    ], $pdo))->validated();
+    throw new RuntimeException('Se aceptó un partido entre el mismo equipo.');
+} catch (Liga\Support\ValidationException) {
+}
+
+$playedRequest = new Liga\Http\Requests\StorePartidoRequest([
+    'local_team_id' => '1',
+    'visitor_team_id' => '2',
+    'played_on' => '2026-10-21',
+    'played_at' => '20:15',
+    'venue' => 'Arena',
+    'status' => 'played',
+    'local_score' => '91',
+    'visitor_score' => '87',
+], $pdo);
+$playedData = $playedRequest->validated();
+if ($playedData['played'] !== 1 || $playedData['localScore'] !== 91 || $playedData['visitorScore'] !== 87) {
+    throw new RuntimeException('La validación del partido jugado no devolvió el estado y marcador esperados.');
+}
+
 $legacyPdo = new PDO('sqlite::memory:');
-$legacyPdo->exec('CREATE TABLE matches (id INTEGER PRIMARY KEY)');
+$legacyPdo->exec('CREATE TABLE matches (id INTEGER PRIMARY KEY, played_on TEXT NOT NULL)');
+$legacyPdo->exec("INSERT INTO matches (id, played_on) VALUES (1, '2026-10-20')");
 $legacyPdo->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)');
 $legacyPdo->exec('CREATE TABLE teams (id INTEGER PRIMARY KEY, name TEXT NOT NULL, city TEXT NOT NULL)');
+$legacyPdo->exec('CREATE TABLE players (id INTEGER PRIMARY KEY, team_id INTEGER NOT NULL, name TEXT NOT NULL, position TEXT NOT NULL, number INTEGER NOT NULL)');
 $legacyPdo->exec("INSERT INTO teams (id, name, city) VALUES (1, 'Equipo legado', 'Lima')");
+$legacyPdo->exec("INSERT INTO players (id, team_id, name, position, number) VALUES (1, 1, 'Jugador legado', 'Base', 7)");
+$matchUpgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000007_add_match_details.php';
+$matchUpgrade($legacyPdo);
+$matchUpgrade($legacyPdo);
+$matchColumns = $legacyPdo->query('PRAGMA table_info(matches)')->fetchAll(PDO::FETCH_COLUMN, 1);
+$legacyMatch = $legacyPdo->query('SELECT * FROM matches WHERE id = 1')->fetch(PDO::FETCH_ASSOC);
+if (
+    !in_array('played_at', $matchColumns, true)
+    || !in_array('venue', $matchColumns, true)
+    || $legacyMatch['played_on'] !== '2026-10-20'
+    || $legacyMatch['venue'] !== null
+) {
+    throw new RuntimeException('La migración de detalles no preservó los partidos existentes.');
+}
 $emailUpgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000004_add_email_to_users.php';
 $emailUpgrade($legacyPdo);
 $emailColumns = $legacyPdo->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_COLUMN, 1);
@@ -172,6 +274,20 @@ if (
     || $legacyTeam['logo_url'] !== null
 ) {
     throw new RuntimeException('La migración de detalles no preservó los equipos existentes.');
+}
+
+$playerUpgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000006_add_player_details.php';
+$playerUpgrade($legacyPdo);
+$playerUpgrade($legacyPdo);
+$playerColumns = $legacyPdo->query('PRAGMA table_info(players)')->fetchAll(PDO::FETCH_COLUMN, 1);
+$legacyPlayer = $legacyPdo->query('SELECT * FROM players WHERE id = 1')->fetch(PDO::FETCH_ASSOC);
+if (
+    !in_array('height', $playerColumns, true)
+    || !in_array('birth_date', $playerColumns, true)
+    || $legacyPlayer['name'] !== 'Jugador legado'
+    || $legacyPlayer['height'] !== null
+) {
+    throw new RuntimeException('La migración de detalles no preservó los jugadores existentes.');
 }
 
 $upgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000003_add_match_played_status.php';
