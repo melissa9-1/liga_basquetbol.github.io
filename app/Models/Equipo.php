@@ -21,16 +21,42 @@ final class Equipo extends Model
         return $this->fetchOne('SELECT * FROM teams WHERE id = :id LIMIT 1', ['id' => $id]);
     }
 
-    public function save(?int $id, string $name, string $city): void
+    public function save(
+        ?int $id,
+        string $name,
+        string $city,
+        ?string $logoUrl = null,
+        ?string $coach = null,
+        ?int $foundedYear = null
+    ): void
     {
         if ($id === null) {
-            $this->run('INSERT INTO teams (name, city) VALUES (:name, :city)', compact('name', 'city'));
+            $this->run(
+                'INSERT INTO teams (name, city, logo_url, coach, founded_year)
+                 VALUES (:name, :city, :logo_url, :coach, :founded_year)',
+                [
+                    'name' => $name,
+                    'city' => $city,
+                    'logo_url' => $logoUrl,
+                    'coach' => $coach,
+                    'founded_year' => $foundedYear,
+                ]
+            );
             return;
         }
 
         $this->run(
-            'UPDATE teams SET name = :name, city = :city WHERE id = :id',
-            compact('name', 'city', 'id')
+            'UPDATE teams
+             SET name = :name, city = :city, logo_url = :logo_url, coach = :coach, founded_year = :founded_year
+             WHERE id = :id',
+            [
+                'name' => $name,
+                'city' => $city,
+                'logo_url' => $logoUrl,
+                'coach' => $coach,
+                'founded_year' => $foundedYear,
+                'id' => $id,
+            ]
         );
     }
 

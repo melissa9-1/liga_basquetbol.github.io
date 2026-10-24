@@ -28,7 +28,14 @@ final class EquipoController extends Controller
             handle_validation($exception, '/equipos/index.php');
         }
 
-        (new Equipo($this->pdo))->save($data['id'], $data['name'], $data['city']);
+        (new Equipo($this->pdo))->save(
+            $data['id'],
+            $data['name'],
+            $data['city'],
+            $data['logoUrl'],
+            $data['coach'],
+            $data['foundedYear']
+        );
         flash('success', $data['id'] === null ? 'Equipo creado correctamente.' : 'Equipo actualizado correctamente.');
         redirect('/equipos/index.php');
     }

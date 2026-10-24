@@ -13,7 +13,10 @@ return static function (PDO $pdo): void {
             CREATE TABLE IF NOT EXISTS teams (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
-                city TEXT NOT NULL
+                city TEXT NOT NULL,
+                logo_url TEXT,
+                coach TEXT,
+                founded_year INTEGER
             );
 
             CREATE TABLE IF NOT EXISTS players (
@@ -54,7 +57,10 @@ return static function (PDO $pdo): void {
         CREATE TABLE IF NOT EXISTS teams (
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(150) NOT NULL,
-            city VARCHAR(150) NOT NULL
+            city VARCHAR(150) NOT NULL,
+            logo_url TEXT NULL,
+            coach VARCHAR(150) NULL,
+            founded_year SMALLINT UNSIGNED NULL
         ) ENGINE=InnoDB;
 
         CREATE TABLE IF NOT EXISTS players (

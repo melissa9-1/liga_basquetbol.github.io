@@ -56,6 +56,59 @@ try {
 
 $teams->save(null, 'Halcones', 'Monterrey');
 $teams->save(null, 'Titanes', 'Guadalajara');
+$teamRequest = new Liga\Http\Requests\StoreEquipoRequest([
+    'name' => 'Lobos',
+    'city' => 'Puebla',
+    'logo_url' => 'https://example.com/lobos.png',
+    'coach' => 'María López',
+    'founded_year' => '2001',
+], $pdo);
+$teamData = $teamRequest->validated();
+$teams->save(
+    null,
+    $teamData['name'],
+    $teamData['city'],
+    $teamData['logoUrl'],
+    $teamData['coach'],
+    $teamData['foundedYear']
+);
+$team = $teams->find(3);
+if (
+    $team === null
+    || $team['logo_url'] !== 'https://example.com/lobos.png'
+    || $team['coach'] !== 'María López'
+    || (int) $team['founded_year'] !== 2001
+) {
+    throw new RuntimeException('Los detalles del equipo no se guardaron correctamente.');
+}
+
+$teams->save(3, 'Lobos del Sur', 'Puebla', null, null, null);
+$team = $teams->find(3);
+if ($team === null || $team['logo_url'] !== null || $team['coach'] !== null || $team['founded_year'] !== null) {
+    throw new RuntimeException('Los detalles del equipo no se actualizaron o limpiaron correctamente.');
+}
+$teams->delete(3);
+
+try {
+    (new Liga\Http\Requests\StoreEquipoRequest([
+        'name' => 'Equipo inválido',
+        'city' => 'Ciudad',
+        'logo_url' => 'javascript:alert(1)',
+    ], $pdo))->validated();
+    throw new RuntimeException('Se aceptó una URL insegura para el logo.');
+} catch (Liga\Support\ValidationException) {
+}
+
+try {
+    (new Liga\Http\Requests\StoreEquipoRequest([
+        'name' => 'Equipo inválido',
+        'city' => 'Ciudad',
+        'founded_year' => (string) ((int) date('Y') + 1),
+    ], $pdo))->validated();
+    throw new RuntimeException('Se aceptó un año de fundación futuro.');
+} catch (Liga\Support\ValidationException) {
+}
+
 $players = new Liga\Models\Jugador($pdo);
 $players->save(null, 1, 'Ana', 'Base', 4);
 $players->save(null, 2, 'Luis', 'Alero', 8);
@@ -96,6 +149,8 @@ if ($request->validated()['playedOn'] !== '2026-10-21') {
 $legacyPdo = new PDO('sqlite::memory:');
 $legacyPdo->exec('CREATE TABLE matches (id INTEGER PRIMARY KEY)');
 $legacyPdo->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)');
+$legacyPdo->exec('CREATE TABLE teams (id INTEGER PRIMARY KEY, name TEXT NOT NULL, city TEXT NOT NULL)');
+$legacyPdo->exec("INSERT INTO teams (id, name, city) VALUES (1, 'Equipo legado', 'Lima')");
 $emailUpgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000004_add_email_to_users.php';
 $emailUpgrade($legacyPdo);
 $emailColumns = $legacyPdo->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_COLUMN, 1);
@@ -103,6 +158,21 @@ if (!in_array('email', $emailColumns, true)) {
     throw new RuntimeException('La migración no agregó correo a una tabla de usuarios existente.');
 }
 $emailUpgrade($legacyPdo);
+
+$teamUpgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000005_add_team_details.php';
+$teamUpgrade($legacyPdo);
+$teamUpgrade($legacyPdo);
+$teamColumns = $legacyPdo->query('PRAGMA table_info(teams)')->fetchAll(PDO::FETCH_COLUMN, 1);
+$legacyTeam = $legacyPdo->query('SELECT * FROM teams WHERE id = 1')->fetch(PDO::FETCH_ASSOC);
+if (
+    !in_array('logo_url', $teamColumns, true)
+    || !in_array('coach', $teamColumns, true)
+    || !in_array('founded_year', $teamColumns, true)
+    || $legacyTeam['name'] !== 'Equipo legado'
+    || $legacyTeam['logo_url'] !== null
+) {
+    throw new RuntimeException('La migración de detalles no preservó los equipos existentes.');
+}
 
 $upgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000003_add_match_played_status.php';
 $upgrade($legacyPdo);

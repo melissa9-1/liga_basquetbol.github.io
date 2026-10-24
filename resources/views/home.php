@@ -138,7 +138,19 @@
                     <?php if ($teams): ?>
                         <div class="team-grid">
                             <?php foreach (array_slice($teams, 0, 4) as $team): ?>
-                                <article class="team-card"><span class="team-card__emblem" aria-hidden="true">🏀</span><div><h3><?= h($team['name']) ?></h3><p><?= h($team['city']) ?></p></div></article>
+                                <article class="team-card">
+                                    <?php if (!empty($team['logo_url'])): ?>
+                                        <img class="team-card__emblem" src="<?= h($team['logo_url']) ?>" alt="Logo de <?= h($team['name']) ?>" loading="lazy" referrerpolicy="no-referrer">
+                                    <?php else: ?>
+                                        <span class="team-card__emblem" aria-hidden="true">🏀</span>
+                                    <?php endif; ?>
+                                    <div>
+                                        <h3><?= h($team['name']) ?></h3>
+                                        <p><?= h($team['city']) ?></p>
+                                        <?php if (!empty($team['coach'])): ?><p>Entrenador: <?= h($team['coach']) ?></p><?php endif; ?>
+                                        <?php if (!empty($team['founded_year'])): ?><p>Fundado en <?= (int) $team['founded_year'] ?></p><?php endif; ?>
+                                    </div>
+                                </article>
                             <?php endforeach; ?>
                         </div>
                     <?php else: ?>
