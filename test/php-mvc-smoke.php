@@ -21,6 +21,39 @@ Liga\Support\MigrationRunner::run($pdo, dirname(__DIR__) . '/database/migrations
 Liga\Support\MigrationRunner::run($pdo, dirname(__DIR__) . '/database/migrations');
 
 $teams = new Liga\Models\Equipo($pdo);
+$users = new Liga\Models\User($pdo);
+$registration = (new Liga\Http\Requests\RegisterRequest([
+    'username' => 'admin',
+    'email' => 'admin@example.com',
+    'password' => 'secret',
+], $pdo))->validated();
+if ($registration['email'] !== 'admin@example.com') {
+    throw new RuntimeException('El formulario de registro no validó el correo electrónico.');
+}
+$users->create($registration['username'], $registration['email'], $registration['password']);
+if ($users->findByUsername('admin') === null) {
+    throw new RuntimeException('El usuario con correo electrónico no se guardó correctamente.');
+}
+
+try {
+    $users->create('another-admin', 'admin@example.com', 'secret');
+    throw new RuntimeException('Se aceptó un correo electrónico que ya está registrado.');
+} catch (PDOException $exception) {
+    if ($exception->getCode() !== '23000') {
+        throw $exception;
+    }
+}
+
+try {
+    (new Liga\Http\Requests\RegisterRequest([
+        'username' => 'invalid-email',
+        'email' => 'correo-no-valido',
+        'password' => 'secret',
+    ], $pdo))->validated();
+    throw new RuntimeException('Se aceptó un correo electrónico con formato no válido.');
+} catch (Liga\Support\ValidationException) {
+}
+
 $teams->save(null, 'Halcones', 'Monterrey');
 $teams->save(null, 'Titanes', 'Guadalajara');
 $players = new Liga\Models\Jugador($pdo);
@@ -62,6 +95,15 @@ if ($request->validated()['playedOn'] !== '2026-10-21') {
 
 $legacyPdo = new PDO('sqlite::memory:');
 $legacyPdo->exec('CREATE TABLE matches (id INTEGER PRIMARY KEY)');
+$legacyPdo->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT, password TEXT)');
+$emailUpgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000004_add_email_to_users.php';
+$emailUpgrade($legacyPdo);
+$emailColumns = $legacyPdo->query('PRAGMA table_info(users)')->fetchAll(PDO::FETCH_COLUMN, 1);
+if (!in_array('email', $emailColumns, true)) {
+    throw new RuntimeException('La migración no agregó correo a una tabla de usuarios existente.');
+}
+$emailUpgrade($legacyPdo);
+
 $upgrade = require dirname(__DIR__) . '/database/migrations/2026_10_20_000003_add_match_played_status.php';
 $upgrade($legacyPdo);
 $columns = $legacyPdo->query('PRAGMA table_info(matches)')->fetchAll(PDO::FETCH_COLUMN, 1);

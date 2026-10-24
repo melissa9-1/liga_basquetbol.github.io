@@ -6,6 +6,7 @@ return static function (PDO $pdo): void {
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
+                email TEXT,
                 password TEXT NOT NULL
             );
 
@@ -46,6 +47,7 @@ return static function (PDO $pdo): void {
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(100) NOT NULL UNIQUE,
+            email VARCHAR(254) NULL,
             password VARCHAR(255) NOT NULL
         ) ENGINE=InnoDB;
 

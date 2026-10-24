@@ -87,6 +87,7 @@
                 <form id="register-form" class="auth-form hidden" method="post" action="<?= h(url('/auth/registro.php')) ?>">
                     <?= csrf_field() ?>
                     <label>Usuario<input type="text" name="username" maxlength="100" required autocomplete="username"></label>
+                    <label>Correo electrónico<input type="email" name="email" maxlength="254" required autocomplete="email"></label>
                     <label>Contraseña<input type="password" name="password" minlength="4" required autocomplete="new-password"></label>
                     <button type="submit" class="button primary">Crear cuenta</button>
                 </form>

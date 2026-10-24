@@ -13,11 +13,15 @@ final class User extends Model
         ]);
     }
 
-    public function create(string $username, string $password): void
+    public function create(string $username, string $email, string $password): void
     {
         $this->run(
-            'INSERT INTO users (username, password) VALUES (:username, :password)',
-            ['username' => $username, 'password' => password_hash($password, PASSWORD_DEFAULT)]
+            'INSERT INTO users (username, email, password) VALUES (:username, :email, :password)',
+            [
+                'username' => $username,
+                'email' => $email,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+            ]
         );
     }
 }

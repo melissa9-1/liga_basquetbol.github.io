@@ -41,12 +41,12 @@ final class AuthController extends Controller
         }
 
         try {
-            (new User($this->pdo))->create($data['username'], $data['password']);
+            (new User($this->pdo))->create($data['username'], $data['email'], $data['password']);
         } catch (PDOException $exception) {
             if ($exception->getCode() !== '23000') {
                 throw $exception;
             }
-            flash('error', 'Ese usuario ya existe.');
+            flash('error', 'Ese usuario o correo electrónico ya está registrado.');
             redirect('/');
         }
 

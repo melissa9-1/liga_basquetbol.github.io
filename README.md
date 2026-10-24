@@ -27,4 +27,4 @@ El archivo [`data/liga.db`](data/liga.db) se conserva únicamente como copia SQL
 - `assets/`: estilos y JavaScript de la interfaz.
 - `index.php`: página principal y dashboard.
 
-Las rutas de administración requieren iniciar sesión y las operaciones POST validan un token CSRF. Los jugadores se pueden filtrar por equipo; los partidos se programan y sus marcadores se registran por separado.
+El registro solicita usuario, correo electrónico válido y contraseña; usuario y correo deben ser únicos. Las cuentas creadas antes de añadir el correo se conservan y pueden seguir iniciando sesión. Las rutas de administración requieren iniciar sesión y las operaciones POST validan un token CSRF. Los jugadores se pueden filtrar por equipo; los partidos se programan y sus marcadores se registran por separado.
