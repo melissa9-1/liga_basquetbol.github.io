@@ -6,7 +6,7 @@
     <title>Resultados · Liga de Básquetbol</title>
     <link rel="stylesheet" href="<?= h(asset_url('/assets/style.css')) ?>">
 </head>
-<body>
+<body class="admin-body">
 <div class="container">
     <?php
     $title = 'Resultados';
