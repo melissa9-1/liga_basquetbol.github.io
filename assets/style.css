@@ -2000,167 +2000,28 @@ td:first-child {
     position: relative;
     min-height: calc(100svh - 78px);
     overflow: hidden;
-    background:
-        linear-gradient(180deg, rgba(42, 34, 48, 0.03), rgba(39, 27, 45, 0.16)),
-        radial-gradient(ellipse at 68% 18%, rgba(255, 248, 227, 0.72), transparent 7%),
-        radial-gradient(ellipse at 88% 22%, rgba(236, 224, 247, 0.66), transparent 16%),
-        radial-gradient(ellipse at 35% 27%, rgba(205, 225, 212, 0.95), transparent 27%),
-        linear-gradient(145deg, #e5e0e8 0%, #b8bec1 24%, #7d8c85 52%, #45484e 100%);
+    background: #080808;
 }
 
 .public-shell .hero-visual::before {
     inset: 0;
-    background:
-        linear-gradient(90deg, rgba(255, 255, 255, 0.18), transparent 24%),
-        radial-gradient(ellipse at 8% 48%, rgba(247, 246, 237, 0.72), transparent 15%),
-        repeating-linear-gradient(118deg, transparent 0 72px, rgba(255, 255, 255, 0.08) 74px 77px, transparent 79px 132px),
-        linear-gradient(180deg, rgba(42, 36, 51, 0.02) 0 51%, rgba(37, 31, 42, 0.25) 100%);
+    z-index: 1;
+    background: linear-gradient(180deg, transparent 65%, rgba(0, 0, 0, 0.48));
+    pointer-events: none;
 }
 
 .public-shell .hero-visual::after {
-    right: -16%;
-    bottom: -12%;
-    width: 132%;
-    height: 38%;
-    transform: rotate(-7deg);
-    border: 2px solid rgba(246, 225, 249, 0.6);
-    border-radius: 50% 50% 0 0;
-    background: linear-gradient(180deg, rgba(91, 59, 93, 0.05), rgba(43, 33, 47, 0.38));
-    box-shadow: 0 -18px 0 -16px rgba(255, 240, 255, 0.6), 0 -50px 0 -48px rgba(255, 240, 255, 0.4);
+    content: none;
 }
 
-.arena-scene {
+.public-shell .hero-image {
     position: absolute;
     inset: 0;
-    overflow: hidden;
-    background:
-        radial-gradient(ellipse at 63% 30%, rgba(242, 233, 204, 0.68), transparent 17%),
-        radial-gradient(ellipse at 92% 35%, rgba(239, 224, 255, 0.38), transparent 15%),
-        linear-gradient(156deg, rgba(237, 231, 218, 0.2) 0 24%, transparent 46%),
-        linear-gradient(180deg, transparent 0 57%, rgba(34, 30, 39, 0.17) 58% 100%);
-}
-
-.arena-light {
-    position: absolute;
-    top: 8%;
-    width: 18%;
-    height: 12%;
-    border-radius: 50%;
-    background: rgba(255, 251, 232, 0.72);
-    filter: blur(36px);
-}
-
-.arena-light--one {
-    left: 25%;
-}
-
-.arena-light--two {
-    right: 8%;
-    top: 17%;
-    background: rgba(238, 224, 250, 0.66);
-}
-
-.arena-stand {
-    position: absolute;
-    right: -9%;
-    bottom: 20%;
-    left: -6%;
-    height: 28%;
-    transform: skewY(-4deg);
-    border-top: 3px solid rgba(242, 230, 249, 0.4);
-    background:
-        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.12) 0 2px, transparent 2px 22px),
-        repeating-linear-gradient(90deg, transparent 0 26px, rgba(246, 228, 251, 0.13) 27px 30px),
-        linear-gradient(180deg, rgba(82, 74, 81, 0.42), rgba(43, 38, 47, 0.7));
-    filter: blur(1px);
-}
-
-.arena-floor {
-    position: absolute;
-    right: -20%;
-    bottom: -39%;
-    left: -15%;
-    height: 61%;
-    transform: perspective(400px) rotateX(21deg) rotate(-4deg);
-    border-top: 3px solid rgba(255, 241, 250, 0.54);
-    background:
-        linear-gradient(90deg, transparent 49.7%, rgba(255, 241, 250, 0.58) 49.9% 50.1%, transparent 50.3%),
-        radial-gradient(ellipse at 50% 0, transparent 0 22%, rgba(255, 241, 250, 0.58) 22.2% 22.6%, transparent 22.8%),
-        repeating-linear-gradient(90deg, transparent 0 24%, rgba(255, 241, 250, 0.18) 24.2% 24.4%, transparent 24.6% 50%),
-        linear-gradient(180deg, #a780a7, #654c68 72%, #413a47);
-}
-
-.arena-hoop {
-    position: absolute;
-    top: 21%;
-    right: 12%;
-    z-index: 2;
-    width: 150px;
-    height: 150px;
-    border-right: 5px solid rgba(44, 38, 44, 0.72);
-}
-
-.arena-hoop::before {
-    position: absolute;
-    top: 0;
-    right: -5px;
-    width: 72px;
-    height: 48px;
-    border: 4px solid rgba(255, 250, 238, 0.8);
-    background: rgba(248, 242, 231, 0.13);
-    content: '';
-}
-
-.arena-hoop i {
-    position: absolute;
-    top: 49px;
-    right: -28px;
-    width: 49px;
-    height: 13px;
-    border: 4px solid #d8784e;
-    border-radius: 50%;
-    background: transparent;
-}
-
-.arena-hoop b {
-    position: absolute;
-    top: 60px;
-    right: -23px;
-    width: 39px;
-    height: 44px;
-    border-right: 1px solid rgba(255, 247, 238, 0.8);
-    border-bottom: 1px solid rgba(255, 247, 238, 0.8);
-    border-left: 1px solid rgba(255, 247, 238, 0.8);
-    background: repeating-linear-gradient(90deg, transparent 0 8px, rgba(255, 247, 238, 0.65) 9px 10px);
-    clip-path: polygon(0 0, 100% 0, 76% 100%, 24% 100%);
-}
-
-.public-shell .court-markings {
-    z-index: 3;
-    overflow: hidden;
-}
-
-.public-shell .court-markings::before {
-    top: 54%;
-    left: 54%;
-    width: min(78%, 460px);
-    border-color: rgba(255, 241, 249, 0.52);
-    box-shadow: 0 0 0 34px rgba(255, 241, 249, 0.06), 0 0 0 90px rgba(255, 241, 249, 0.04);
-}
-
-.public-shell .court-ball {
-    position: absolute;
-    top: 49%;
-    left: 50%;
-    width: clamp(205px, 28vw, 365px);
-    transform: translate(-50%, -50%) rotate(-18deg);
-    border-color: #5b382c;
-    background:
-        linear-gradient(42deg, transparent 48%, #57362a 48.6% 49.7%, transparent 50.3%),
-        linear-gradient(-42deg, transparent 48%, #57362a 48.6% 49.7%, transparent 50.3%),
-        linear-gradient(90deg, transparent 47%, #57362a 47.6% 48.7%, transparent 49.3%),
-        radial-gradient(circle at 31% 23%, #ffe1b0, #ec9a51 44%, #aa5435 85%);
-    box-shadow: 0 40px 90px rgba(32, 22, 33, 0.44), inset -25px -30px 45px rgba(87, 40, 24, 0.23);
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
 }
 
 .hero-image-caption {
@@ -2219,12 +2080,6 @@ td:first-child {
         min-width: 0;
         padding: 12px 13px;
         font-size: 0.56rem;
-    }
-
-    .arena-hoop {
-        right: 6%;
-        transform: scale(0.78);
-        transform-origin: top right;
     }
 }
 
@@ -2309,21 +2164,6 @@ td:first-child {
 
     .public-shell .hero-visual {
         min-height: 48svh;
-    }
-
-    .public-shell .court-ball {
-        width: clamp(170px, 48vw, 250px);
-    }
-
-    .arena-hoop {
-        top: 13%;
-        right: 8%;
-        transform: scale(0.62);
-    }
-
-    .arena-floor {
-        bottom: -46%;
-        height: 65%;
     }
 
     .hero-image-caption {

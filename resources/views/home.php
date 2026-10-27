@@ -110,15 +110,8 @@
                             <a href="#resultados" class="button action primary">Ver resultados</a>
                         </div>
                     </div>
-                    <div class="hero-visual" role="img" aria-label="Ilustración de cancha y balón de básquetbol">
-                        <div class="arena-scene" aria-hidden="true">
-                            <span class="arena-light arena-light--one"></span>
-                            <span class="arena-light arena-light--two"></span>
-                            <span class="arena-stand"></span>
-                            <span class="arena-hoop"><i></i><b></b></span>
-                            <span class="arena-floor"></span>
-                            <span class="court-ball"></span>
-                        </div>
+                    <div class="hero-visual">
+                        <img class="hero-image" src="<?= h(asset_url('img/imagen1.jpg')) ?>" alt="Jugador de básquetbol de los Chicago Bulls encestando">
                         <span class="hero-image-caption">Liga de Básquetbol <i>·</i> Temporada actual</span>
                     </div>
                 </section>
