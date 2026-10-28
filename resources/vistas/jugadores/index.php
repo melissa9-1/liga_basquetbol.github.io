@@ -12,7 +12,7 @@
     $title = 'Jugadores';
     $eyebrow = 'Gestión de la liga';
     require dirname(__DIR__, 3) . '/includes/header.php';
-    require __DIR__ . '/../partials/messages.php';
+    require __DIR__ . '/../fragmentos/mensajes.php';
     ?>
     <section class="panel">
         <h2><?= $editingPlayer ? 'Editar jugador' : 'Registrar jugador' ?></h2>
@@ -36,9 +36,9 @@
             <?php if ($editingPlayer): ?><a class="button secondary" href="<?= h(url('/jugadores/index.php')) ?>">Cancelar</a><?php endif; ?>
         </form>
     </section>
-    <section class="panel">
-        <h2>Jugadores registrados</h2>
-        <form method="get" action="<?= h(url('/jugadores/index.php')) ?>" class="form-grid">
+    <section class="panel player-filter-panel">
+        <h2>Filtrar jugadores</h2>
+        <form method="get" action="<?= h(url('/jugadores/index.php')) ?>" class="form-grid player-filter-form">
             <label>Filtrar por equipo
                 <select name="team_id">
                     <option value="">Todos los equipos</option>
@@ -49,6 +49,9 @@
             </label>
             <button type="submit" class="button secondary">Filtrar</button>
         </form>
+    </section>
+    <section class="panel player-list-panel">
+        <h2>Jugadores registrados</h2>
         <?php if (!$players): ?>
             <p class="empty">No hay jugadores registrados.</p>
         <?php else: ?>

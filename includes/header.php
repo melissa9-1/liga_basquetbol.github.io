@@ -2,4 +2,4 @@
 
 declare(strict_types=1);
 
-require dirname(__DIR__) . '/resources/views/partials/admin-header.php';
+require dirname(__DIR__) . '/resources/vistas/fragmentos/encabezado-admin.php';

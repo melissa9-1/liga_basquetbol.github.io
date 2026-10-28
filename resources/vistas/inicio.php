@@ -7,11 +7,11 @@
     <title>Liga de Básquetbol</title>
     <link rel="stylesheet" href="<?= h(asset_url('/assets/style.css')) ?>">
 </head>
-<body class="<?= $loggedUser ? 'app-body' : 'landing-body' ?>">
-    <main class="container <?= $loggedUser ? 'admin-shell' : 'public-shell' ?>">
-        <?php require __DIR__ . '/partials/messages.php'; ?>
+<body class="<?= is_admin() ? 'app-body' : 'landing-body' ?>">
+    <main class="container <?= is_admin() ? 'admin-shell' : 'public-shell' ?>">
+        <?php require __DIR__ . '/fragmentos/mensajes.php'; ?>
 
-        <?php if ($loggedUser): ?>
+        <?php if (is_admin()): ?>
             <?php
             $title = 'Liga de Básquetbol';
             $eyebrow = 'Panel administrativo · ' . $loggedUser['username'];
@@ -58,20 +58,34 @@
                         <a href="#equipos">Equipos</a>
                         <a href="#resultados">Partidos</a>
                         <a href="#clasificacion">Clasificación</a>
+                        <a href="<?= h(url('/estadisticas/posiciones.php')) ?>">Estadísticas</a>
                     </nav>
                 </div>
-                <button type="button" class="admin-fab" aria-label="Abrir acceso administrativo" aria-controls="admin-panel" aria-expanded="false">
+                <?php if ($loggedUser): ?>
+                    <form method="post" action="<?= h(url('/auth/logout.php')) ?>">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="admin-fab" aria-label="Cerrar sesión">
+                            <svg class="admin-fab__icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M10 17l5-5-5-5M15 12H3M12 3h7v18h-7"></path>
+                            </svg>
+                            <span>Salir</span>
+                        </button>
+                    </form>
+                <?php else: ?>
+                <button type="button" class="admin-fab" aria-label="Abrir acceso a la cuenta" aria-controls="admin-panel" aria-expanded="false">
                     <svg class="admin-fab__icon" viewBox="0 0 24 24" aria-hidden="true">
                         <circle cx="12" cy="8" r="3.5"></circle>
                         <path d="M5 20c.8-3.3 3.3-5 7-5s6.2 1.7 7 5"></path>
                     </svg>
                     <span>Acceso</span>
                 </button>
+                <?php endif; ?>
             </header>
 
+            <?php if (!$loggedUser): ?>
             <aside class="admin-panel" id="admin-panel" aria-label="Panel administrativo">
                 <div class="admin-panel__header">
-                    <p class="mini-auth__eyebrow">Acceso administrativo</p>
+                    <p class="mini-auth__eyebrow">Acceso a la cuenta</p>
                     <button type="button" class="admin-panel__close" aria-label="Cerrar panel">×</button>
                 </div>
                 <div class="tabs">
@@ -92,6 +106,7 @@
                     <button type="submit" class="button primary">Crear cuenta</button>
                 </form>
             </aside>
+            <?php endif; ?>
 
             <div class="landing-page">
                 <section class="hero-section" id="inicio">

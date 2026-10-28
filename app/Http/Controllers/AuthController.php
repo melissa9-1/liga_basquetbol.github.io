@@ -27,7 +27,11 @@ final class AuthController extends Controller
         }
 
         session_regenerate_id(true);
-        $_SESSION['user'] = ['id' => (int) $user['id'], 'username' => $user['username']];
+        $_SESSION['user'] = [
+            'id' => (int) $user['id'],
+            'username' => $user['username'],
+            'role' => $user['role'],
+        ];
         flash('success', 'Sesión iniciada correctamente.');
         redirect('/');
     }

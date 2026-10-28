@@ -8,7 +8,12 @@ spl_autoload_register(static function (string $class): void {
         return;
     }
 
-    $path = __DIR__ . '/app/' . str_replace('\\', DIRECTORY_SEPARATOR, substr($class, strlen($prefix))) . '.php';
+    $relativeClass = substr($class, strlen($prefix));
+    if ($relativeClass === 'Models\\User') {
+        $relativeClass = 'Models\\Usuario';
+    }
+
+    $path = __DIR__ . '/app/' . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
     if (is_file($path)) {
         require $path;
     }

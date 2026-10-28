@@ -16,7 +16,7 @@ final class StorePartidoRequest extends Request
             throw new ValidationException('Selecciona dos equipos distintos.');
         }
 
-        $team = $this->pdo->prepare('SELECT COUNT(*) FROM teams WHERE id IN (:local, :visitor)');
+        $team = $this->pdo->prepare('SELECT COUNT(*) FROM equipos WHERE id IN (:local, :visitor)');
         $team->execute(['local' => $localTeamId, 'visitor' => $visitorTeamId]);
         if ((int) $team->fetchColumn() !== 2) {
             throw new ValidationException('Los dos equipos seleccionados deben existir.');

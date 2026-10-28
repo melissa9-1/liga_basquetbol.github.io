@@ -2368,6 +2368,15 @@ td:first-child {
     border-radius: 14px;
 }
 
+.admin-body .player-filter-form {
+    max-width: 560px;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-body .player-filter-form .button {
+    min-width: 130px;
+}
+
 @media (max-width: 760px) {
     .admin-body .container,
     .app-body .admin-shell {
@@ -2434,5 +2443,13 @@ td:first-child {
     .admin-body .topbar,
     .app-body .topbar {
         margin-bottom: 24px;
+    }
+
+    .admin-body .player-filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-body .player-filter-form .button {
+        width: 100%;
     }
 }

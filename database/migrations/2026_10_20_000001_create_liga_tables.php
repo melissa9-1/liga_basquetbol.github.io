@@ -3,93 +3,93 @@
 return static function (PDO $pdo): void {
     if ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
         $pdo->exec("
-            CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS usuarios (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL UNIQUE,
-                email TEXT,
-                password TEXT NOT NULL
+                nombre_usuario TEXT NOT NULL UNIQUE,
+                correo TEXT,
+                contrasena TEXT NOT NULL
             );
 
-            CREATE TABLE IF NOT EXISTS teams (
+            CREATE TABLE IF NOT EXISTS equipos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                city TEXT NOT NULL,
-                logo_url TEXT,
-                coach TEXT,
-                founded_year INTEGER
+                nombre TEXT NOT NULL,
+                ciudad TEXT NOT NULL,
+                url_logo TEXT,
+                entrenador TEXT,
+                anio_fundacion INTEGER
             );
 
-            CREATE TABLE IF NOT EXISTS players (
+            CREATE TABLE IF NOT EXISTS jugadores (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                team_id INTEGER NOT NULL,
-                name TEXT NOT NULL,
-                position TEXT NOT NULL,
-                number INTEGER NOT NULL CHECK(number > 0),
-                height REAL NULL,
-                birth_date TEXT NULL,
-                FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+                equipo_id INTEGER NOT NULL,
+                nombre TEXT NOT NULL,
+                posicion TEXT NOT NULL,
+                numero INTEGER NOT NULL CHECK(numero > 0),
+                estatura REAL NULL,
+                fecha_nacimiento TEXT NULL,
+                FOREIGN KEY (equipo_id) REFERENCES equipos(id) ON DELETE CASCADE
             );
 
-            CREATE TABLE IF NOT EXISTS matches (
+            CREATE TABLE IF NOT EXISTS partidos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                local_team_id INTEGER NOT NULL,
-                visitor_team_id INTEGER NOT NULL,
-                local_score INTEGER NOT NULL DEFAULT 0,
-                visitor_score INTEGER NOT NULL DEFAULT 0,
-                played_on TEXT NOT NULL,
-                played_at TEXT,
-                venue TEXT,
-                played INTEGER NOT NULL DEFAULT 1,
-                CHECK(local_team_id <> visitor_team_id),
-                CHECK(local_score >= 0),
-                CHECK(visitor_score >= 0),
-                FOREIGN KEY (local_team_id) REFERENCES teams(id) ON DELETE CASCADE,
-                FOREIGN KEY (visitor_team_id) REFERENCES teams(id) ON DELETE CASCADE
+                equipo_local_id INTEGER NOT NULL,
+                equipo_visitante_id INTEGER NOT NULL,
+                puntos_local INTEGER NOT NULL DEFAULT 0,
+                puntos_visitante INTEGER NOT NULL DEFAULT 0,
+                fecha_juego TEXT NOT NULL,
+                hora_juego TEXT,
+                sede TEXT,
+                jugado INTEGER NOT NULL DEFAULT 1,
+                CHECK(equipo_local_id <> equipo_visitante_id),
+                CHECK(puntos_local >= 0),
+                CHECK(puntos_visitante >= 0),
+                FOREIGN KEY (equipo_local_id) REFERENCES equipos(id) ON DELETE CASCADE,
+                FOREIGN KEY (equipo_visitante_id) REFERENCES equipos(id) ON DELETE CASCADE
             );
         ");
         return;
     }
 
     $pdo->exec("
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS usuarios (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(100) NOT NULL UNIQUE,
-            email VARCHAR(254) NULL,
-            password VARCHAR(255) NOT NULL
+            nombre_usuario VARCHAR(100) NOT NULL UNIQUE,
+            correo VARCHAR(254) NULL,
+            contrasena VARCHAR(255) NOT NULL
         ) ENGINE=InnoDB;
 
-        CREATE TABLE IF NOT EXISTS teams (
+        CREATE TABLE IF NOT EXISTS equipos (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(150) NOT NULL,
-            city VARCHAR(150) NOT NULL,
-            logo_url TEXT NULL,
-            coach VARCHAR(150) NULL,
-            founded_year SMALLINT UNSIGNED NULL
+            nombre VARCHAR(150) NOT NULL,
+            ciudad VARCHAR(150) NOT NULL,
+            url_logo TEXT NULL,
+            entrenador VARCHAR(150) NULL,
+            anio_fundacion SMALLINT UNSIGNED NULL
         ) ENGINE=InnoDB;
 
-        CREATE TABLE IF NOT EXISTS players (
+        CREATE TABLE IF NOT EXISTS jugadores (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            team_id INT NOT NULL,
-            name VARCHAR(150) NOT NULL,
-            position VARCHAR(80) NOT NULL,
-            number INT NOT NULL,
-            height DECIMAL(5,2) NULL,
-            birth_date DATE NULL,
-            CONSTRAINT fk_players_team FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+            equipo_id INT NOT NULL,
+            nombre VARCHAR(150) NOT NULL,
+            posicion VARCHAR(80) NOT NULL,
+            numero INT NOT NULL,
+            estatura DECIMAL(5,2) NULL,
+            fecha_nacimiento DATE NULL,
+            CONSTRAINT fk_jugadores_equipo FOREIGN KEY (equipo_id) REFERENCES equipos(id) ON DELETE CASCADE
         ) ENGINE=InnoDB;
 
-        CREATE TABLE IF NOT EXISTS matches (
+        CREATE TABLE IF NOT EXISTS partidos (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            local_team_id INT NOT NULL,
-            visitor_team_id INT NOT NULL,
-            local_score INT NOT NULL DEFAULT 0,
-            visitor_score INT NOT NULL DEFAULT 0,
-            played_on DATE NOT NULL,
-            played_at TIME NULL,
-            venue VARCHAR(200) NULL,
-            played TINYINT(1) NOT NULL DEFAULT 1,
-            CONSTRAINT fk_matches_local FOREIGN KEY (local_team_id) REFERENCES teams(id) ON DELETE CASCADE,
-            CONSTRAINT fk_matches_visitor FOREIGN KEY (visitor_team_id) REFERENCES teams(id) ON DELETE CASCADE
+            equipo_local_id INT NOT NULL,
+            equipo_visitante_id INT NOT NULL,
+            puntos_local INT NOT NULL DEFAULT 0,
+            puntos_visitante INT NOT NULL DEFAULT 0,
+            fecha_juego DATE NOT NULL,
+            hora_juego TIME NULL,
+            sede VARCHAR(200) NULL,
+            jugado TINYINT(1) NOT NULL DEFAULT 1,
+            CONSTRAINT fk_partidos_local FOREIGN KEY (equipo_local_id) REFERENCES equipos(id) ON DELETE CASCADE,
+            CONSTRAINT fk_partidos_visitante FOREIGN KEY (equipo_visitante_id) REFERENCES equipos(id) ON DELETE CASCADE
         ) ENGINE=InnoDB;
     ");
 };

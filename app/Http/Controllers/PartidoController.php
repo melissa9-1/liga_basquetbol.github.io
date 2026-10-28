@@ -14,7 +14,7 @@ final class PartidoController extends Controller
 {
     public function index(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         $this->render('partidos/index', [
             'teams' => (new Equipo($this->pdo))->all(),
             'matches' => (new Partido($this->pdo))->all(),
@@ -23,13 +23,13 @@ final class PartidoController extends Controller
 
     public function results(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         $this->render('partidos/resultados', ['matches' => (new Partido($this->pdo))->all()]);
     }
 
     public function save(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         try {
             $data = (new StorePartidoRequest($_POST, $this->pdo))->validated();
         } catch (ValidationException $exception) {
@@ -52,7 +52,7 @@ final class PartidoController extends Controller
 
     public function saveResult(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         try {
             $data = (new StoreResultadoRequest($_POST, $this->pdo))->validated();
         } catch (ValidationException $exception) {
@@ -70,7 +70,7 @@ final class PartidoController extends Controller
 
     public function delete(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
         if ($id === false || $id < 1) {
             flash('error', 'El partido seleccionado no es válido.');

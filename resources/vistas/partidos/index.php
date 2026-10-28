@@ -12,7 +12,7 @@
     $title = 'Partidos';
     $eyebrow = 'Gestión de la liga';
     require dirname(__DIR__, 3) . '/includes/header.php';
-    require __DIR__ . '/../partials/messages.php';
+    require __DIR__ . '/../fragmentos/mensajes.php';
     ?>
     <section class="panel">
         <h2>Registrar partido</h2>

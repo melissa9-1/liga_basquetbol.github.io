@@ -40,6 +40,11 @@ function current_user(): ?array
     return isset($_SESSION['user']) && is_array($_SESSION['user']) ? $_SESSION['user'] : null;
 }
 
+function is_admin(): bool
+{
+    return (current_user()['role'] ?? null) === 'administrador';
+}
+
 function flash(string $key, string $message): void
 {
     $_SESSION['_flash'][$key] = $message;

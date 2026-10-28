@@ -1,43 +1,44 @@
 CREATE DATABASE IF NOT EXISTS liga_basquetbol CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE liga_basquetbol;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) NOT NULL UNIQUE,
-    email VARCHAR(254) NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    nombre_usuario VARCHAR(100) NOT NULL UNIQUE,
+    correo VARCHAR(254) NULL UNIQUE,
+    contrasena VARCHAR(255) NOT NULL,
+    rol VARCHAR(20) NOT NULL DEFAULT 'usuario'
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS teams (
+CREATE TABLE IF NOT EXISTS equipos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    city VARCHAR(150) NOT NULL,
-    logo_url TEXT NULL,
-    coach VARCHAR(150) NULL,
-    founded_year SMALLINT UNSIGNED NULL
+    nombre VARCHAR(150) NOT NULL,
+    ciudad VARCHAR(150) NOT NULL,
+    url_logo TEXT NULL,
+    entrenador VARCHAR(150) NULL,
+    anio_fundacion SMALLINT UNSIGNED NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS players (
+CREATE TABLE IF NOT EXISTS jugadores (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    team_id INT NOT NULL,
-    name VARCHAR(150) NOT NULL,
-    position VARCHAR(80) NOT NULL,
-    number INT NOT NULL,
-    height DECIMAL(5,2) NULL,
-    birth_date DATE NULL,
-    CONSTRAINT fk_players_team FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE
+    equipo_id INT NOT NULL,
+    nombre VARCHAR(150) NOT NULL,
+    posicion VARCHAR(80) NOT NULL,
+    numero INT NOT NULL,
+    estatura DECIMAL(5,2) NULL,
+    fecha_nacimiento DATE NULL,
+    CONSTRAINT fk_jugadores_equipo FOREIGN KEY (equipo_id) REFERENCES equipos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS matches (
+CREATE TABLE IF NOT EXISTS partidos (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    local_team_id INT NOT NULL,
-    visitor_team_id INT NOT NULL,
-    local_score INT NOT NULL DEFAULT 0,
-    visitor_score INT NOT NULL DEFAULT 0,
-    played_on DATE NOT NULL,
-    played_at TIME NULL,
-    venue VARCHAR(200) NULL,
-    played TINYINT(1) NOT NULL DEFAULT 1,
-    CONSTRAINT fk_matches_local FOREIGN KEY (local_team_id) REFERENCES teams(id) ON DELETE CASCADE,
-    CONSTRAINT fk_matches_visitor FOREIGN KEY (visitor_team_id) REFERENCES teams(id) ON DELETE CASCADE
+    equipo_local_id INT NOT NULL,
+    equipo_visitante_id INT NOT NULL,
+    puntos_local INT NOT NULL DEFAULT 0,
+    puntos_visitante INT NOT NULL DEFAULT 0,
+    fecha_juego DATE NOT NULL,
+    hora_juego TIME NULL,
+    sede VARCHAR(200) NULL,
+    jugado TINYINT(1) NOT NULL DEFAULT 1,
+    CONSTRAINT fk_partidos_local FOREIGN KEY (equipo_local_id) REFERENCES equipos(id) ON DELETE CASCADE,
+    CONSTRAINT fk_partidos_visitante FOREIGN KEY (equipo_visitante_id) REFERENCES equipos(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;

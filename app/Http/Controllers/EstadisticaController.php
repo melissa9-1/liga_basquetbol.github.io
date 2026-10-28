@@ -11,11 +11,10 @@ final class EstadisticaController extends Controller
 {
     public function index(): void
     {
-        $this->requireLogin();
-        $matches = (new Partido($this->pdo))->recent(5);
+        $this->currentUser();
         $this->render('estadisticas/index', [
             'standings' => $this->standings(),
-            'latestMatches' => $matches,
+            'completedMatches' => (new Partido($this->pdo))->completed(),
         ]);
     }
 
@@ -23,7 +22,9 @@ final class EstadisticaController extends Controller
     {
         $teams = (new Equipo($this->pdo))->all();
         $rows = $this->pdo->query(
-            'SELECT local_team_id, visitor_team_id, local_score, visitor_score FROM matches WHERE played = 1'
+            'SELECT equipo_local_id AS local_team_id, equipo_visitante_id AS visitor_team_id,
+                    puntos_local AS local_score, puntos_visitante AS visitor_score
+             FROM partidos WHERE jugado = 1'
         )->fetchAll();
 
         $standings = [];

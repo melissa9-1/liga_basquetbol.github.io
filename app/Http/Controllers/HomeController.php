@@ -15,13 +15,14 @@ final class HomeController extends Controller
         $equipos = new Equipo($this->pdo);
         $jugadores = new Jugador($this->pdo);
         $partidos = new Partido($this->pdo);
-        $this->render('home', [
+        $loggedUser = $this->currentUser();
+        $this->render('inicio', [
             'teams' => $equipos->all(),
             'matches' => $partidos->recent(4),
             'standings' => (new EstadisticaController($this->pdo))->standings(),
             'playerCount' => $jugadores->count(),
             'matchCount' => $partidos->count(),
-            'loggedUser' => current_user(),
+            'loggedUser' => $loggedUser,
         ]);
     }
 }

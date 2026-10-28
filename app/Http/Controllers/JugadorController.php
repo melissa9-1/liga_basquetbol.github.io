@@ -13,7 +13,7 @@ final class JugadorController extends Controller
 {
     public function index(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         $model = new Jugador($this->pdo);
         $editId = filter_var($_GET['edit'] ?? null, FILTER_VALIDATE_INT);
         $editingPlayer = $editId !== false && $editId > 0 ? $model->find($editId) : null;
@@ -36,7 +36,7 @@ final class JugadorController extends Controller
 
     public function save(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         try {
             $data = (new StoreJugadorRequest($_POST, $this->pdo))->validated();
         } catch (ValidationException $exception) {
@@ -58,7 +58,7 @@ final class JugadorController extends Controller
 
     public function delete(): void
     {
-        $this->requireLogin();
+        $this->requireAdmin();
         $id = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
         if ($id === false || $id < 1) {
             flash('error', 'El jugador seleccionado no es válido.');

@@ -8,17 +8,26 @@ final class Equipo extends Model
 {
     public function all(): array
     {
-        return $this->fetchAll('SELECT * FROM teams ORDER BY name ASC');
+        return $this->fetchAll(
+            'SELECT id, nombre AS name, ciudad AS city, url_logo AS logo_url,
+                    entrenador AS coach, anio_fundacion AS founded_year
+             FROM equipos ORDER BY nombre ASC'
+        );
     }
 
     public function count(): int
     {
-        return (int) $this->pdo->query('SELECT COUNT(*) FROM teams')->fetchColumn();
+        return (int) $this->pdo->query('SELECT COUNT(*) FROM equipos')->fetchColumn();
     }
 
     public function find(int $id): ?array
     {
-        return $this->fetchOne('SELECT * FROM teams WHERE id = :id LIMIT 1', ['id' => $id]);
+        return $this->fetchOne(
+            'SELECT id, nombre AS name, ciudad AS city, url_logo AS logo_url,
+                    entrenador AS coach, anio_fundacion AS founded_year
+             FROM equipos WHERE id = :id LIMIT 1',
+            ['id' => $id]
+        );
     }
 
     public function save(
@@ -32,7 +41,7 @@ final class Equipo extends Model
     {
         if ($id === null) {
             $this->run(
-                'INSERT INTO teams (name, city, logo_url, coach, founded_year)
+                'INSERT INTO equipos (nombre, ciudad, url_logo, entrenador, anio_fundacion)
                  VALUES (:name, :city, :logo_url, :coach, :founded_year)',
                 [
                     'name' => $name,
@@ -46,8 +55,9 @@ final class Equipo extends Model
         }
 
         $this->run(
-            'UPDATE teams
-             SET name = :name, city = :city, logo_url = :logo_url, coach = :coach, founded_year = :founded_year
+            'UPDATE equipos
+             SET nombre = :name, ciudad = :city, url_logo = :logo_url,
+                 entrenador = :coach, anio_fundacion = :founded_year
              WHERE id = :id',
             [
                 'name' => $name,
@@ -62,6 +72,6 @@ final class Equipo extends Model
 
     public function delete(int $id): void
     {
-        $this->run('DELETE FROM teams WHERE id = :id', ['id' => $id]);
+        $this->run('DELETE FROM equipos WHERE id = :id', ['id' => $id]);
     }
 }

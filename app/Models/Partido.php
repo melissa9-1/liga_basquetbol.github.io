@@ -9,12 +9,17 @@ final class Partido extends Model
     public function all(): array
     {
         return $this->fetchAll(
-            'SELECT m.*, home.name AS local_name, home.city AS local_city,
-                    away.name AS visitor_name, away.city AS visitor_city
-             FROM matches m
-             JOIN teams home ON home.id = m.local_team_id
-             JOIN teams away ON away.id = m.visitor_team_id
-             ORDER BY m.played_on DESC, m.id DESC'
+            'SELECT m.id, m.equipo_local_id AS local_team_id,
+                    m.equipo_visitante_id AS visitor_team_id,
+                    m.puntos_local AS local_score, m.puntos_visitante AS visitor_score,
+                    m.fecha_juego AS played_on, m.hora_juego AS played_at,
+                    m.sede AS venue, m.jugado AS played,
+                    home.nombre AS local_name, home.ciudad AS local_city,
+                    away.nombre AS visitor_name, away.ciudad AS visitor_city
+             FROM partidos m
+             JOIN equipos home ON home.id = m.equipo_local_id
+             JOIN equipos away ON away.id = m.equipo_visitante_id
+             ORDER BY m.fecha_juego DESC, m.id DESC'
         );
     }
 
@@ -22,20 +27,43 @@ final class Partido extends Model
     {
         $limit = max(1, min(100, $limit));
         return $this->fetchAll(
-            'SELECT m.*, home.name AS local_name, home.city AS local_city,
-                    away.name AS visitor_name, away.city AS visitor_city
-             FROM matches m
-             JOIN teams home ON home.id = m.local_team_id
-             JOIN teams away ON away.id = m.visitor_team_id
-             WHERE m.played = 1
-             ORDER BY m.played_on DESC, m.id DESC
+            'SELECT m.id, m.equipo_local_id AS local_team_id,
+                    m.equipo_visitante_id AS visitor_team_id,
+                    m.puntos_local AS local_score, m.puntos_visitante AS visitor_score,
+                    m.fecha_juego AS played_on, m.hora_juego AS played_at,
+                    m.sede AS venue, m.jugado AS played,
+                    home.nombre AS local_name, home.ciudad AS local_city,
+                    away.nombre AS visitor_name, away.ciudad AS visitor_city
+             FROM partidos m
+             JOIN equipos home ON home.id = m.equipo_local_id
+             JOIN equipos away ON away.id = m.equipo_visitante_id
+             WHERE m.jugado = 1
+             ORDER BY m.fecha_juego DESC, m.id DESC
              LIMIT ' . $limit
+        );
+    }
+
+    public function completed(): array
+    {
+        return $this->fetchAll(
+            'SELECT m.id, m.equipo_local_id AS local_team_id,
+                    m.equipo_visitante_id AS visitor_team_id,
+                    m.puntos_local AS local_score, m.puntos_visitante AS visitor_score,
+                    m.fecha_juego AS played_on, m.hora_juego AS played_at,
+                    m.sede AS venue, m.jugado AS played,
+                    home.nombre AS local_name, home.ciudad AS local_city,
+                    away.nombre AS visitor_name, away.ciudad AS visitor_city
+             FROM partidos m
+             JOIN equipos home ON home.id = m.equipo_local_id
+             JOIN equipos away ON away.id = m.equipo_visitante_id
+             WHERE m.jugado = 1
+             ORDER BY m.fecha_juego DESC, m.id DESC'
         );
     }
 
     public function count(): int
     {
-        return (int) $this->pdo->query('SELECT COUNT(*) FROM matches')->fetchColumn();
+        return (int) $this->pdo->query('SELECT COUNT(*) FROM partidos')->fetchColumn();
     }
 
     public function save(
@@ -49,7 +77,7 @@ final class Partido extends Model
     ): void
     {
         $this->run(
-            'INSERT INTO matches (local_team_id, visitor_team_id, local_score, visitor_score, played_on, played_at, venue, played)
+            'INSERT INTO partidos (equipo_local_id, equipo_visitante_id, puntos_local, puntos_visitante, fecha_juego, hora_juego, sede, jugado)
              VALUES (:local_team_id, :visitor_team_id, :local_score, :visitor_score, :played_on, :played_at, :venue, 1)',
             [
                 'local_team_id' => $localTeamId,
@@ -74,7 +102,7 @@ final class Partido extends Model
         int $visitorScore = 0
     ): void {
         $this->run(
-            'INSERT INTO matches (local_team_id, visitor_team_id, local_score, visitor_score, played_on, played_at, venue, played)
+            'INSERT INTO partidos (equipo_local_id, equipo_visitante_id, puntos_local, puntos_visitante, fecha_juego, hora_juego, sede, jugado)
              VALUES (:local_team_id, :visitor_team_id, :local_score, :visitor_score, :played_on, :played_at, :venue, :played)',
             [
                 'local_team_id' => $localTeamId,
@@ -92,13 +120,13 @@ final class Partido extends Model
     public function recordResult(int $id, int $localScore, int $visitorScore): void
     {
         $this->run(
-            'UPDATE matches SET local_score = :local_score, visitor_score = :visitor_score, played = 1 WHERE id = :id',
+            'UPDATE partidos SET puntos_local = :local_score, puntos_visitante = :visitor_score, jugado = 1 WHERE id = :id',
             ['id' => $id, 'local_score' => $localScore, 'visitor_score' => $visitorScore]
         );
     }
 
     public function delete(int $id): void
     {
-        $this->run('DELETE FROM matches WHERE id = :id', ['id' => $id]);
+        $this->run('DELETE FROM partidos WHERE id = :id', ['id' => $id]);
     }
 }

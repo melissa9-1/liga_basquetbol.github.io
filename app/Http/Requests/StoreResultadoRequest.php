@@ -11,7 +11,7 @@ final class StoreResultadoRequest extends Request
     public function validated(): array
     {
         $matchId = $this->integer('match_id', 'El partido', 1);
-        $match = $this->pdo->prepare('SELECT 1 FROM matches WHERE id = :id');
+        $match = $this->pdo->prepare('SELECT 1 FROM partidos WHERE id = :id');
         $match->execute(['id' => $matchId]);
         if (!$match->fetchColumn()) {
             throw new ValidationException('El partido seleccionado no existe.');

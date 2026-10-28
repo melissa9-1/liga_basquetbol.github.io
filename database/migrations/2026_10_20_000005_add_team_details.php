@@ -3,19 +3,19 @@
 return static function (PDO $pdo): void {
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
     if ($driver === 'sqlite') {
-        $columns = $pdo->query('PRAGMA table_info(teams)')->fetchAll(PDO::FETCH_COLUMN, 1);
+        $columns = $pdo->query('PRAGMA table_info(equipos)')->fetchAll(PDO::FETCH_COLUMN, 1);
         if ($columns === []) {
-            throw new RuntimeException('No existe la tabla teams para agregar los detalles de los equipos.');
+            throw new RuntimeException('No existe la tabla equipos para agregar los detalles de los equipos.');
         }
 
         $definitions = [
-            'logo_url' => 'TEXT NULL',
-            'coach' => 'TEXT NULL',
-            'founded_year' => 'INTEGER NULL',
+            'url_logo' => 'TEXT NULL',
+            'entrenador' => 'TEXT NULL',
+            'anio_fundacion' => 'INTEGER NULL',
         ];
         foreach ($definitions as $name => $definition) {
             if (!in_array($name, $columns, true)) {
-                $pdo->exec("ALTER TABLE teams ADD COLUMN {$name} {$definition}");
+                $pdo->exec("ALTER TABLE equipos ADD COLUMN {$name} {$definition}");
             }
         }
         return;
@@ -27,14 +27,14 @@ return static function (PDO $pdo): void {
              WHERE table_schema = DATABASE() AND table_name = :table AND column_name = :column'
         );
         $definitions = [
-            'logo_url' => 'TEXT NULL',
-            'coach' => 'VARCHAR(150) NULL',
-            'founded_year' => 'SMALLINT UNSIGNED NULL',
+            'url_logo' => 'TEXT NULL',
+            'entrenador' => 'VARCHAR(150) NULL',
+            'anio_fundacion' => 'SMALLINT UNSIGNED NULL',
         ];
         foreach ($definitions as $name => $definition) {
-            $column->execute(['table' => 'teams', 'column' => $name]);
+            $column->execute(['table' => 'equipos', 'column' => $name]);
             if ((int) $column->fetchColumn() === 0) {
-                $pdo->exec("ALTER TABLE teams ADD COLUMN {$name} {$definition}");
+                $pdo->exec("ALTER TABLE equipos ADD COLUMN {$name} {$definition}");
             }
         }
         return;

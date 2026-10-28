@@ -3,18 +3,18 @@
 return static function (PDO $pdo): void {
     $driver = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME);
     if ($driver === 'sqlite') {
-        $columns = $pdo->query('PRAGMA table_info(matches)')->fetchAll(PDO::FETCH_COLUMN, 1);
+        $columns = $pdo->query('PRAGMA table_info(partidos)')->fetchAll(PDO::FETCH_COLUMN, 1);
         if ($columns === []) {
-            throw new RuntimeException('No existe la tabla matches para agregar los detalles de los partidos.');
+            throw new RuntimeException('No existe la tabla partidos para agregar los detalles de los partidos.');
         }
 
         $definitions = [
-            'played_at' => 'TEXT NULL',
-            'venue' => 'TEXT NULL',
+            'hora_juego' => 'TEXT NULL',
+            'sede' => 'TEXT NULL',
         ];
         foreach ($definitions as $name => $definition) {
             if (!in_array($name, $columns, true)) {
-                $pdo->exec("ALTER TABLE matches ADD COLUMN {$name} {$definition}");
+                $pdo->exec("ALTER TABLE partidos ADD COLUMN {$name} {$definition}");
             }
         }
         return;
@@ -26,13 +26,13 @@ return static function (PDO $pdo): void {
              WHERE table_schema = DATABASE() AND table_name = :table AND column_name = :column'
         );
         $definitions = [
-            'played_at' => 'TIME NULL',
-            'venue' => 'VARCHAR(200) NULL',
+            'hora_juego' => 'TIME NULL',
+            'sede' => 'VARCHAR(200) NULL',
         ];
         foreach ($definitions as $name => $definition) {
-            $column->execute(['table' => 'matches', 'column' => $name]);
+            $column->execute(['table' => 'partidos', 'column' => $name]);
             if ((int) $column->fetchColumn() === 0) {
-                $pdo->exec("ALTER TABLE matches ADD COLUMN {$name} {$definition}");
+                $pdo->exec("ALTER TABLE partidos ADD COLUMN {$name} {$definition}");
             }
         }
         return;

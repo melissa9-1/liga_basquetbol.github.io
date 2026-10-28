@@ -13,7 +13,7 @@ final class StoreJugadorRequest extends Request
     {
         $id = ($this->input['id'] ?? '') === '' ? null : $this->integer('id', 'El jugador', 1);
         $teamId = $this->integer('team_id', 'El equipo', 1);
-        $team = $this->pdo->prepare('SELECT 1 FROM teams WHERE id = :id');
+        $team = $this->pdo->prepare('SELECT 1 FROM equipos WHERE id = :id');
         $team->execute(['id' => $teamId]);
         if (!$team->fetchColumn()) {
             throw new ValidationException('Selecciona un equipo existente.');
