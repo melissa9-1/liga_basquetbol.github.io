@@ -42,7 +42,7 @@ final class PartidoController extends Controller
             $data['playedOn'],
             $data['playedAt'],
             $data['venue'],
-            $data['played'],
+            (bool) $data['played'],
             $data['localScore'],
             $data['visitorScore']
         );
